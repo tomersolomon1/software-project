@@ -12,7 +12,7 @@
 int main() {
 	int heaps[MAX_HEAPS] = { 0 };
 	int move_vec[2] = { 0 };
-	SP_BUFF_SET();
+	// SP_BUFF_SET();
 	int heaps_number = get_N();
 	if(!heaps_number){ return 0; }
 	int heaps_sizes = get_heap_sizes(heaps, heaps_number);
