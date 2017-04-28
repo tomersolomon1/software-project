@@ -1,5 +1,6 @@
 /*
  * main.c
+ * Tomer Solomon, Sapir Freizeit
  */
 
 #include "main_aux.h"
