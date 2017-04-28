@@ -35,6 +35,7 @@ int get_N() {
 }
 
 //get heaps size and start the heaps[]. returns 0 if not valid
+//assuming the user gives N sizes
 int get_heap_sizes(int heaps[], int N){
 	char input;
 	int i = 0;
@@ -126,10 +127,10 @@ int player_turn_2(int heaps[], int N){
 	int heap_index = 0;
 	int amount_removed = 0;
 	char input;
-	int q = 1;
+	int q = 1; /*quest type: q=1 for heap_index, q=2 for amount_removed*/
 	int had_error = 0;
 	while (((input = getchar()) != EOF) && (input != '\n')) {
-		if(had_error){continue;}
+		if(had_error){ continue; }
 		else if(q == 1){
 			if('0' <= input && input <= '9'){
 				heap_index = heap_index * 10;
