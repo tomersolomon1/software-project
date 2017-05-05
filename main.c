@@ -7,7 +7,6 @@
 #include "sp_nim.h"
 #include "SPBufferset.h"
 #include <stdio.h>
-# define MAX_HEAPS 32
 
 int main() {
 	int heaps[MAX_HEAPS] = { 0 };
@@ -15,7 +14,7 @@ int main() {
 	// SP_BUFF_SET();
 	int heaps_number = get_N();
 	if(!heaps_number){ return 0; }
-	int heaps_sizes = get_heap_sizes(heaps, heaps_number);
+	int heaps_sizes = get_heap_sizes(heaps);
 	if(!heaps_sizes){ return 0; }
 	int turn_number = 1;
 	int turn = 0; /* 0 is the computer's turn, 1 is the users turn */
@@ -30,10 +29,11 @@ int main() {
 			print_heaps(heaps, heaps_number);
 			player_turn(heaps, heaps_number);
 		}
-		print_game_status(heaps, heaps_number, turn_number);
 		game_on = is_game_over(heaps, heaps_number);
+		if(game_on) { print_game_status(heaps, heaps_number, turn_number); }
 		turn = 1 - turn;
 	}
 	turn ? printf("Computer wins!\n") : printf("You win!\n");
 	return 0;
 }
+

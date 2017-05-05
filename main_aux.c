@@ -8,7 +8,6 @@
 #include "main_aux.h"
 #include "sp_nim.h"
 
-
 //get N=number of heaps, returns 0 if invalid
 int get_N() {
 	char input;
@@ -36,7 +35,7 @@ int get_N() {
 
 //get heaps size and start the heaps[]. returns 0 if not valid
 //assuming the user gives N sizes
-int get_heap_sizes(int heaps[], int N){
+int get_heap_sizes(int heaps[]){
 	char input;
 	int i = 0;
 	int curr_size = 0;
@@ -74,7 +73,7 @@ int get_heap_sizes(int heaps[], int N){
 
 //prints heaps[] status as text
 void print_game_status(int heaps[], int N, int turn_number){
-	printf("In turn %d the heap sizes are:", turn_number);
+	printf("In turn %d heap sizes are:", turn_number);
 	fflush(stdout);
 	for(int i=0; i < N; i++){
 		printf(" h%d=%d", i+1, heaps[i]);
@@ -87,7 +86,7 @@ void print_game_status(int heaps[], int N, int turn_number){
 //print heaps visually
 void print_heaps(int heaps[], int N){
 	int max_objects = 0;
-	int num_spaces[32] = {0};
+	int num_spaces[MAX_HEAPS] = {0};
 	for(int i=0; i < N; i++){
 		if (heaps[i] > max_objects){ max_objects = heaps[i];}
 	}
@@ -98,14 +97,15 @@ void print_heaps(int heaps[], int N){
 	for(int row=0; row < max_objects; row++){
 		for(int col=0; col < N; col++){
 			if(num_spaces[col] > 0){
-				printf(" \t");
+				printf(" ");
 				fflush(stdout);
 				num_spaces[col] -= 1;
 			}
 			else{
-				printf("*\t");
+				printf("*");
 				fflush(stdout);
 			}
+			if(col < (N-1)) { printf("\t"); }
 		}
 		printf("\n");
 		fflush(stdout);
