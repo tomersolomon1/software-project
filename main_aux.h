@@ -7,12 +7,13 @@
 
 #ifndef MAIN_AUX_H_
 #define MAIN_AUX_H_
+# define MAX_HEAPS 32
 
 int player_turn_2(int heaps[], int N);
 
 int get_N();
 
-int get_heap_sizes(int heaps[], int N);
+int get_heap_sizes(int heaps[]);
 
 void print_game_status(int heaps[], int N, int turn_number);
 

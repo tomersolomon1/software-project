@@ -63,5 +63,3 @@ int is_game_over(int heaps[], int heaps_number) {
 	}
 	return 0; /* the game is over */
 }
-
-
