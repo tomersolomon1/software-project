@@ -10,16 +10,17 @@
 # define MAX_HEAPS 32
 
 int main() {
+	SP_BUFF_SET();
 	int heaps[MAX_HEAPS] = { 0 };
 	int move_vec[2] = { 0 };
-	// SP_BUFF_SET();
+	int turn_number = 1;
+	int turn = 0; /* 0 is the computer's turn, 1 is the users turn */
+	int game_on = 1;
 	int heaps_number = get_N();
 	if(!heaps_number){ return 0; }
 	int heaps_sizes = get_heap_sizes(heaps, heaps_number);
 	if(!heaps_sizes){ return 0; }
-	int turn_number = 1;
-	int turn = 0; /* 0 is the computer's turn, 1 is the users turn */
-	int game_on = 1;
+
 	print_game_status(heaps, heaps_number, turn_number);
 	while(game_on) {
 		turn_number++;
