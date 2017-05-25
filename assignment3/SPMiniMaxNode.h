@@ -3,4 +3,6 @@
 
 //Put all decleartions and constants here
 
+int evaluate_board(SPFiarGame* game);
+
 #endif
