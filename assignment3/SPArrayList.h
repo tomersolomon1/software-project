@@ -1,6 +1,8 @@
 #ifndef SPARRAYLIST_H_
 #define SPARRAYLIST_H_
 #include <stdbool.h>
+#include <stdlib.h>
+#include <stddef.h>
 
 /**
  * SPArrayList summary:
@@ -252,5 +254,10 @@ bool spArrayListIsFull(SPArrayList* src);
  * Otherwise, true is returned.
  */
 bool spArrayListIsEmpty(SPArrayList* src);
+
+/**
+ * print the list
+ * */
+void spArrayListPrint(SPArrayList* src);
 
 #endif
