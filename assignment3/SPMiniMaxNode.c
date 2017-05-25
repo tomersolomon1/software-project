@@ -26,7 +26,7 @@ SPFiarGame *create_board() {
 	return new_board;
 }
 
-/* creating another copy of SPFiarGame */
+/* creating another copy of SPFiarGame - for MiniMax algo */
 SPFiarGame* copy_board(SPFiarGame* game) {
 	SPFiarGame* new_game = (SPFiarGame *) malloc(sizeof(SPFiarGame));
 	if (new_game == NULL) {
