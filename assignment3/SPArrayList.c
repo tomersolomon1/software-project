@@ -364,6 +364,25 @@ bool spArrayListIsEmpty(SPArrayList* src){
 	return false;
 }
 
+/*
+ * push element at first, if the src is full:
+ * remove the last element and then add at first
+ * **/
+
+SP_ARRAY_LIST_MESSAGE spArrayListPushFirst(SPArrayList* src, int elem){
+	if(spArrayListIsFull(src)){
+		SP_ARRAY_LIST_MESSAGE status = spArrayListRemoveLast(src);
+		if(status != SP_ARRAY_LIST_SUCCESS){
+			return status;
+		}
+		status = spArrayListAddFirst(src, elem);
+		return status;
+	}
+	else{
+		return spArrayListAddFirst(src, elem);
+	}
+}
+
 /**
  * print list
  * */
