@@ -44,7 +44,6 @@ SPFiarGame* copy_board(SPFiarGame* game) {
 	}
 }
 
-
 int spMinimaxSuggestMove(SPFiarGame* currentGame, unsigned int maxDepth) {
 	SPFiarGame* game_copy = copy_board(currentGame);
 	if (game_copy != NULL) {
@@ -69,7 +68,6 @@ void update_best_move(move_value* this_move, int value, int ci, char current_pla
 	}
 }
 
-
 /* checks if the game is over, and updates this
  * return 1 if the game is over
  * otherwise, return 0
@@ -92,13 +90,15 @@ int is_game_over(SPFiarGame* game_copy, move_value* this_move) {
 }
 
 
-/* assuming maxDepth >= 1*/
+/* assuming maxDepth >= 1
+ * the object of player 1 is to maximize the value-function, and the object of player 2 is to minimize the value-function
+ * by default, |this_move.value| < INT_MAX, since value = INT_MAX is means winning of player 1 (similarly, INT_MIN means winning of player 2) */
 move_value minimaxAlgo(SPFiarGame* game_copy, unsigned int maxDepth) {
 	char current_symbol; /* the symbol of the current player */
 	move_value this_move; /* will contain the best move and it's value */
 	game_copy->currentPlayer == '1' ? current_symbol = SP_FIAR_GAME_PLAYER_1_SYMBOL : current_symbol = SP_FIAR_GAME_PLAYER_2_SYMBOL;
 	this_move.move = -1; /* default value */
-	game_copy->currentPlayer == '1' ? this_move.value = INT_MIN : this_move.value = INT_MAX; /* defualt value for the mini-max algo */
+	game_copy->currentPlayer == '1' ? this_move.value = (INT_MIN + 1) : this_move.value = (INT_MAX - 1); /* defualt value for the mini-max algo */
 	if (is_game_over(game_copy, &this_move)) { /* checking if the game is over */
 		return this_move;
 	}

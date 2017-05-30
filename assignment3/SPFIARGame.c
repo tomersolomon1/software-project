@@ -438,7 +438,7 @@ int diagonal_winning(SPFiarGame* src) {
 */
 
 char spFiarCheckWinner(SPFiarGame* src){
-	char winner; /* defualt value: null char */
+	char winner; /* default value: null char */
 	int diagonal_winner = diagonal_winning(src);
 	if (diagonal_winner != 0) {
 		diagonal_winner == 1 ? winner = SP_FIAR_GAME_PLAYER_1_SYMBOL : winner = SP_FIAR_GAME_PLAYER_2_SYMBOL;
