@@ -53,7 +53,7 @@ int spMinimaxSuggestMove(SPFiarGame* currentGame, unsigned int maxDepth) {
 		if (best_move.move != -1) {
 			return best_move.move;
 		} else {
-			/* no legal move - should ask the forum */
+			/* no legal move - should ask the forum  */
 			/* according to the return value we'll be able to who won / there was a tie */
 			return -1;
 		}
