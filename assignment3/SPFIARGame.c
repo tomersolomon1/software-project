@@ -33,12 +33,14 @@
 #define Player1 '1'
 #define Player2 '2'
 
+
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <stddef.h>
 #include <string.h>
 #include "SPArrayList.h"
+#include "SPFIARGame.h"
 
 
 
@@ -304,6 +306,123 @@ char spFiarGameGetCurrentPlayer(SPFiarGame* src){
 	return SP_FIAR_GAME_EMPTY_ENTRY;
 }
 
+
+
+
+/* return 0 if no 4-in-a-row in this row
+ * return 1 if there is 4 in a row - for player 1
+ * return 2 if there is 4 in a row - for player 2
+ */
+int four_in_a_row(SPFiarGame* game_copy, int ri) {
+	int sequence_len = 0; /* the length of the current sequence */
+	char sequence_symbol = ' '; /* no player sequence */
+	for (int ci = 0; ci < SP_FIAR_GAME_N_COLUMNS; ci++) {
+		if (sequence_symbol == game_copy->gameBoard[ri][ci]) {
+			if (sequence_symbol != ' ') {
+				if (sequence_len < 3) { /* it's not 4-in-a-row yet*/
+					sequence_len += 1;
+				} else { /* found 4-in-a-row! */
+					if (sequence_symbol == SP_FIAR_GAME_PLAYER_1_SYMBOL) { /* player 1 won */
+						return 1;
+					} else { /* player 2 won */
+						return 2;
+					}
+				}
+			}
+		} else { /* it's a new sequence */
+			sequence_symbol = game_copy->gameBoard[ri][ci];
+			sequence_len = 0;
+		}
+	}
+	return 0;
+}
+
+
+/* return 0 if no 4-in-a-column in this column
+ * return 1 if there is 4 in a column - for player 1
+ * return 2 if there is 4 in a column - for player 2
+ */
+
+int four_in_a_column(SPFiarGame* game_copy, int ci) {
+	int sequence_len = 0; /* the length of the current sequence */
+	char sequence_symbol = ' '; /* no player sequence */
+	for (int ri = 0; ri < SP_FIAR_GAME_N_ROWS; ri++) {
+		if (sequence_symbol == game_copy->gameBoard[ri][ci]) {
+			if (sequence_symbol != ' ') {
+				if (sequence_len < 3) { /* it's not 4-in-a-column yet*/
+					sequence_len += 1;
+				} else { /* found 4-in-a-column! */
+					if (sequence_symbol == SP_FIAR_GAME_PLAYER_1_SYMBOL) { /* player 1 won */
+						return 1;
+					} else { /* player 2 won */
+						return 2;
+					}
+				}
+			}
+		} else { /* it's a new sequence */
+			sequence_symbol = game_copy->gameBoard[ri][ci];
+			sequence_len = 0;
+		}
+	}
+	return 0;
+}
+
+/* return 0 if no 4-in-a-column in this diagonal
+ * return 1 if there is 4 in a diagonal - for player 1
+ * return 2 if there is 4 in a diagonal - for player 2
+ */
+int four_in_a_diagonal(SPFiarGame* game_copy, int ri, int ci) {
+	int sequence_len = 0; /* the length of the current sequence */
+	char sequence_symbol = ' '; /* no player sequence */
+	while ((ri >= 0) && (ci < SP_FIAR_GAME_N_COLUMNS)) {
+		if (sequence_symbol == game_copy->gameBoard[ri][ci]) {
+			if (sequence_symbol != ' ') {
+				if (sequence_len < 3) { /* it's not 4-in-a-column yet*/
+					sequence_len += 1;
+				} else { /* found 4-in-a-column! */
+					if (sequence_symbol == SP_FIAR_GAME_PLAYER_1_SYMBOL) { /* player 1 won */
+						return 1;
+					} else { /* player 2 won */
+						return 2;
+					}
+				}
+			}
+		} else { /* it's a new sequence */
+			sequence_symbol = game_copy->gameBoard[ri][ci];
+			sequence_len = 0;
+		}
+		/* moving in diagonal */
+		ri -= 1;
+		ci += 1;
+	}
+	return 0;
+}
+
+int is_board_full(SPFiarGame* game_copy) {
+	for (int ci = 0; ci < SP_FIAR_GAME_N_COLUMNS; ci++) {
+		if (game_copy->tops[ci] < SP_FIAR_GAME_N_ROWS) {
+			return 0; /* the board isn't full - found empty slot */
+		}
+	}
+	return 1; /* the board is full */
+}
+
+int diagonal_winning(SPFiarGame* src) {
+	for (int ri = 0; ri < SP_FIAR_GAME_N_ROWS; ri++) {
+		int diagonal_winner = four_in_a_diagonal(src, ri, 0);
+		if (diagonal_winner != 0) {
+			return diagonal_winner;
+		}
+	}
+	for (int ci = 0; ci < SP_FIAR_GAME_N_COLUMNS; ci++) {
+		int diagonal_winner = four_in_a_diagonal(src, SP_FIAR_GAME_N_ROWS - 1, ci);
+		if (diagonal_winner != 0) {
+			return diagonal_winner;
+		}
+	}
+	return 0; /* no winner in any diagonal */
+}
+
 /**
 * Checks if there's a winner in the specified game status. The function returns either
 * SP_FIAR_GAME_PLAYER_1_SYMBOL or SP_FIAR_GAME_PLAYER_2_SYMBOL in case there's a winner, where
@@ -321,5 +440,32 @@ char spFiarCheckWinner(SPFiarGame* src){
 	return SP_FIAR_GAME_TIE_SYMBOL ;
 }
 
+char spFiarCheckWinner(SPFiarGame* src){
+	char winner; /* defualt value: null char */
+	int diagonal_winner = diagonal_winning(src);
+	if (diagonal_winner != 0) {
+		diagonal_winner == 1 ? winner = SP_FIAR_GAME_PLAYER_1_SYMBOL : winner = SP_FIAR_GAME_PLAYER_2_SYMBOL;
+		return winner;
+	}
+	for (int ri = 0; ri < SP_FIAR_GAME_N_ROWS; ri++) {
+		int row_winner = four_in_a_row(src, ri);
+		if (row_winner != 0) {
+			row_winner == 1 ? winner = SP_FIAR_GAME_PLAYER_1_SYMBOL : winner = SP_FIAR_GAME_PLAYER_2_SYMBOL;
+			return winner;
+		}
+	}
+	for (int ci = 0; ci < SP_FIAR_GAME_N_COLUMNS; ci++) {
+		int column_winner = four_in_a_column(src, ci);
+		if (column_winner != 0) {
+			column_winner == 1 ? winner = SP_FIAR_GAME_PLAYER_1_SYMBOL : winner = SP_FIAR_GAME_PLAYER_2_SYMBOL;
+			return winner;
+		}
+	}
 
+	if (is_board_full(src)) { /* checking if the game is full - and therefore a tie */
+		return SP_FIAR_GAME_TIE_SYMBOL;
+	}
+
+	return NULL_CHAR; /* */
+}
 

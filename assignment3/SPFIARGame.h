@@ -34,7 +34,7 @@
 #define SP_FIAR_GAME_EMPTY_ENTRY ' '
 #define Player1 '1'
 #define Player2 '2'
-
+#define NULL_CHAR '\0'
 
 typedef struct sp_fiar_game_t {
 	char gameBoard[SP_FIAR_GAME_N_ROWS][SP_FIAR_GAME_N_COLUMNS];
