@@ -1,6 +1,10 @@
 #ifndef SPFIARGAME_H_
 #define SPFIARGAME_H_
 #include <stdbool.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <stddef.h>
+#include <string.h>
 #include "SPArrayList.h"
 
 /**
@@ -28,6 +32,9 @@
 #define SP_FIAR_GAME_PLAYER_2_SYMBOL 'O'
 #define SP_FIAR_GAME_TIE_SYMBOL '-'
 #define SP_FIAR_GAME_EMPTY_ENTRY ' '
+#define Player1 '1'
+#define Player2 '2'
+
 
 typedef struct sp_fiar_game_t {
 	char gameBoard[SP_FIAR_GAME_N_ROWS][SP_FIAR_GAME_N_COLUMNS];
