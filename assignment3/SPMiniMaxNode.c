@@ -1,18 +1,16 @@
 /*
  * SPMiniMaxNode.c
  *
- *  Created on: 25 במאי 2017
- *      Author: User
  */
 
 #include "SPFIARGame.h"
 #include <limits.h>
 #include <stddef.h>
 
-typedef struct move_consequences_t {
-	int column;
-	int value;
-} move_consequences;
+typedef struct move_value_t {
+	int move; /* the column */
+	int value; /* the value of the move, according to the mini-max algo */
+} move_value;
 
 SPFiarGame *create_board() {
 	SPFiarGame* new_board = (SPFiarGame *) malloc(sizeof(SPFiarGame));
@@ -20,6 +18,7 @@ SPFiarGame *create_board() {
 		for(int j = 0; j < 7; j++) {
 			new_board->gameBoard[i][j] = 2; /* defualt value, means empty */
 		}
+	}
 	for (int ci = 0 ; ci < 7; ci++) {
 		new_board->tops[ci];
 	}
@@ -49,62 +48,173 @@ SPFiarGame* copy_board(SPFiarGame* game) {
 int spMinimaxSuggestMove(SPFiarGame* currentGame, unsigned int maxDepth) {
 	SPFiarGame* game_copy = copy_board(currentGame);
 	if (game_copy != NULL) {
-		move_consequences best_move  = minimaxAlgo(game_copy);
-		if (best_move.column != -1) {
-			return best_move.column;
+		//if (game_is_not_over) - should implement
+		move_value best_move  = minimaxAlgo(game_copy);
+		if (best_move.move != -1) {
+			return best_move.move;
 		} else {
 			/* no legal move - should ask the forum */
+			/* according to the return value we'll be able to who won / there was a tie */
 			return -1;
 		}
-	} else {
-		return -1;
+	} else { /* memory problem */
+		return -2;
 	}
 }
 
-void update_best_move(move_consequences* this_move, int value, int ci, char current_player) {
+void update_best_move(move_value* this_move, int value, int ci, char current_player) {
 	if ((current_player == '1' && value > this_move->value) || (current_player == '2' && value < this_move->value)) {
 			this_move->value = value;
-			this_move->column = ci;
+			this_move->move = ci;
 	}
 }
 
+/* return 0 if no 4-in-a-row in this row
+ * return 1 if there is 4 in a row - for player 1
+ * return 2 if there is 4 in a row - for player 2
+ */
+int four_in_a_row(SPFiarGame* game_copy, int ri) {
+	int sequence_len = 0; /* the length of the current sequence */
+	char sequence_symbol = ' '; /* no player sequence */
+	for (int ci = 0; ci < SP_FIAR_GAME_N_COLUMNS; ci++) {
+		if (sequence_symbol == game_copy->gameBoard[ri][ci]) {
+			if (sequence_symbol != ' ') {
+				if (sequence_len < 3) { /* it's not 4-in-a-row yet*/
+					sequence_len += 1;
+				} else { /* found 4-in-a-row! */
+					if (sequence_symbol == SP_FIAR_GAME_PLAYER_1_SYMBOL) { /* player 1 won */
+						return 1;
+					} else { /* player 2 won */
+						return 2;
+					}
+				}
+			}
+		} else { /* it's a new sequence */
+			sequence_symbol = game_copy->gameBoard[ri][ci];
+			sequence_len = 0;
+		}
+	}
+	return 0;
+}
+
+
+/* return 0 if no 4-in-a-column in this column
+ * return 1 if there is 4 in a column - for player 1
+ * return 2 if there is 4 in a column - for player 2
+ */
+
+int four_in_a_column(SPFiarGame* game_copy, int ci) {
+	int sequence_len = 0; /* the length of the current sequence */
+	char sequence_symbol = ' '; /* no player sequence */
+	for (int ri = 0; ri < SP_FIAR_GAME_N_ROWS; ri++) {
+		if (sequence_symbol == game_copy->gameBoard[ri][ci]) {
+			if (sequence_symbol != ' ') {
+				if (sequence_len < 3) { /* it's not 4-in-a-column yet*/
+					sequence_len += 1;
+				} else { /* found 4-in-a-column! */
+					if (sequence_symbol == SP_FIAR_GAME_PLAYER_1_SYMBOL) { /* player 1 won */
+						return 1;
+					} else { /* player 2 won */
+						return 2;
+					}
+				}
+			}
+		} else { /* it's a new sequence */
+			sequence_symbol = game_copy->gameBoard[ri][ci];
+			sequence_len = 0;
+		}
+	}
+	return 0;
+}
+
+/* return 0 if no 4-in-a-column in this diagonal
+ * return 1 if there is 4 in a diagonal - for player 1
+ * return 2 if there is 4 in a diagonal - for player 2
+ */
+int four_in_a_diagonal(SPFiarGame* game_copy, int ri, int ci) {
+	int sequence_len = 0; /* the length of the current sequence */
+	char sequence_symbol = ' '; /* no player sequence */
+	while ((ri >= 0) && (ci < SP_FIAR_GAME_N_COLUMNS)) {
+		if (sequence_symbol == game_copy->gameBoard[ri][ci]) {
+			if (sequence_symbol != ' ') {
+				if (sequence_len < 3) { /* it's not 4-in-a-column yet*/
+					sequence_len += 1;
+				} else { /* found 4-in-a-column! */
+					if (sequence_symbol == SP_FIAR_GAME_PLAYER_1_SYMBOL) { /* player 1 won */
+						return 1;
+					} else { /* player 2 won */
+						return 2;
+					}
+				}
+			}
+		} else { /* it's a new sequence */
+			sequence_symbol = game_copy->gameBoard[ri][ci];
+			sequence_len = 0;
+		}
+	}
+	return 0;
+}
+
+int is_board_full(SPFiarGame* game_copy) {
+	for (int ci = 0; ci < SP_FIAR_GAME_N_COLUMNS; ci++) {
+		if (game_copy->tops[ci] < SP_FIAR_GAME_N_ROWS) {
+			return 0; /* the board isn't full - found empty slot */
+		}
+	}
+	return 1; /* the board is full */
+}
+
+/* checks if the game is over, and updates this */
+int is_game_over(SPFiarGame* game_copy, move_value* this_move) {
+	if(is_a_tie(game_copy)) {
+		return 0;
+	}
+	return 1;
+}
+
+
 /* assuming maxDepth >= 1*/
-move_consequences minimaxAlgo(SPFiarGame* game_copy, unsigned int maxDepth) {
-	char current_symbol;
-	move_consequences this_move;
+move_value minimaxAlgo(SPFiarGame* game_copy, unsigned int maxDepth) {
+	char current_symbol; /* the symbol of the current player */
+	move_value this_move; /* will contain the best move and it's value */
 	game_copy->currentPlayer == '1' ? current_symbol = SP_FIAR_GAME_PLAYER_1_SYMBOL : current_symbol = SP_FIAR_GAME_PLAYER_2_SYMBOL;
-	this_move.column = -1; /* default value */
-	game_copy->currentPlayer == '1' ? this_move.value = INT_MIN : this_move.value = INT_MAX;
-	if (is_board_ful(game_copy)) {
+	this_move.move = -1; /* default value */
+	game_copy->currentPlayer == '1' ? this_move.value = INT_MIN : this_move.value = INT_MAX; /* defualt value for the mini-max algo */
+	if (is_game_over(game_copy, &this_move)) { /* checking if the game is over */
 		return this_move;
 	}
 
 	if (maxDepth == 1) { /* halting condition */
 		for (int ci = 0; ci < SP_FIAR_GAME_N_COLUMNS; ci++) {
-			int top_row_ci = game_copy->tops[ci];
+			int top_row_ci = game_copy->tops[ci]; /* to be changed to is-valid-move */
 			if (top_row_ci < SP_FIAR_GAME_N_ROWS) { /* column isn't full */
 				game_copy->gameBoard[top_row_ci][ci] = current_symbol; /* if game_copy->currentPlayer == 1 then put 'X', otherwise put 'O'*/
+				game_copy->tops[ci] = game_copy->tops[ci] + 1; /* increasing tops[ci] */
 				int game_value = evaluate_board(game_copy);
 				update_best_move(&this_move, game_value, ci, game_copy->currentPlayer); /* update best move, if necessary */
 				game_copy->gameBoard[top_row_ci][ci] = ' '; /* restoring game_copy->gameBoard[top_ci][i] to be empty again */
+				game_copy->tops[ci] = game_copy->tops[ci] - 1; /* decreasing tops[ci] */
 			}
 		}
-		return move_consequences;
-	} else { /* maxDepth > 1 */
+		return move_value;
+	} else { /* maxDepth > 1, need for recursion */
 		game_copy->currentPlayer == '1' ? game_copy->currentPlayer = '2' : game_copy->currentPlayer = '1'; /* changing the turn*/
 		for (int ci = 0; ci < SP_FIAR_GAME_N_COLUMNS; ci++) {
-			move_consequences next_move;
+			move_value next_move;
 			int top_row_ci = game_copy->tops[ci];
 			if (top_row_ci < SP_FIAR_GAME_N_ROWS) { /* column isn't full */
 				game_copy->gameBoard[top_row_ci][ci] = current_symbol; /* if game_copy->currentPlayer == 1 then put 'X', otherwise put 'O'*/
+				game_copy->tops[ci] = game_copy->tops[ci] + 1; /* increasing tops[ci] */
 				next_move = minimaxAlgo(game_copy, maxDepth - 1);
 				update_best_move(&this_move, next_move.value, ci, game_copy->currentPlayer); /* update best move, if necessary */
+				game_copy->tops[ci] = game_copy->tops[ci] - 1; /* decreasing tops[ci] */
 				game_copy->gameBoard[top_row_ci][ci] = ' '; /* restoring game_copy->gameBoard[top_ci][i] to be empty again */
+				if ((next_move.move == -1) && (next_move.value == INT_MIN || next_move.value == INT_MAX)) { /* this was a winning move! */
+					break; /* no need for further evaluations, found the best move - somebody has just won the game! */
+				}
 			}
 		}
+		game_copy->currentPlayer == '1' ? game_copy->currentPlayer = '2' : game_copy->currentPlayer = '1'; /* changing the turn back */
 	}
 	return this_move;
 }
-
-
-
