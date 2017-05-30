@@ -37,24 +37,24 @@ typedef struct command_t {
  * true if the string represents a valid integer, and false otherwise.
  */
 bool spParserIsInt(const char* str){
-	int i = 0;
-	char a = str[i];
-	while(a != '\0'){
-		if(!( '0' <= a && a <= '9')){
+	int i = atoi(str);
+	if(i != 0){
+		return true;
+	}
+	for(int i = 0; i < strlen(str); i++){
+		if(str[i] != '0'){
 			return false;
 		}
-		i++;
-		a = str[i];
 	}
 	return true;
 }
 
 int get_place_1st_nonspace_char(const char* str){
 	int i = 0;
-	char first_nonspace_char = str[i];
-	while(first_nonspace_char != '\n' && first_nonspace_char != ' ' && first_nonspace_char != '\0'){
+	char c = str[i];
+	while(c != '\n' && c != '\0' &&  (c == '\t' || c == ' ')){
 		i++;
-		first_nonspace_char = str[i];
+		c = str[i];
 	}
 	return i;
 }
@@ -93,7 +93,7 @@ SPCommand spParserPraseLine(const char* str){
 	const char* commands[5];
 	commands[0] = "suggest_move";
 	commands[1] = "undo_move";
-	commands[2] = "add_disk";
+	commands[2] = "add_disc";
 	commands[3] = "quit";
 	commands[4] = "restart_game";
 
@@ -104,8 +104,7 @@ SPCommand spParserPraseLine(const char* str){
 	comms[3] = SP_QUIT;
 	comms[4] = SP_RESTART;
 
-	int place_1st_nonspace_char = get_place_1st_nonspace_char(str);
-	int curr_pointer = place_1st_nonspace_char;
+	int curr_pointer = get_place_1st_nonspace_char(str);
 	int curr_cmd = 0;
 	switch(str[curr_pointer]){ // now curr_pointer points the first nonspace char
 		case 's':
@@ -127,16 +126,20 @@ SPCommand spParserPraseLine(const char* str){
 			return command;
 	}
 	bool is_begin_ok = is_str1_begins_with_str2(str + curr_pointer, commands[curr_cmd]);
+	if(!is_begin_ok){
+		return command;
+	}
 	curr_pointer = curr_pointer + strlen(commands[curr_cmd]);
-	curr_pointer += get_place_1st_nonspace_char(str + curr_pointer); // now curr_pointer points the second nonspace char
+	const char *copy = str + curr_pointer;
+	curr_pointer += get_place_1st_nonspace_char(copy); // now curr_pointer points the second nonspace char
 
-	if(is_begin_ok && curr_cmd != 2){ //no more parameters
+	if(curr_cmd != 2){ 						//no more parameters
 		if(str[curr_pointer] == '\0' || str[curr_pointer] == '\n'){
 			command.cmd = comms[curr_cmd];
 		}
 		return command;
 	}
-	else if(is_begin_ok && curr_cmd == 2){
+	else if(curr_cmd == 2){ 				//need to get coloumn number
 		bool had_number = false;
 		int col = 0;
 		while(str[curr_pointer] != '\0' && str[curr_pointer] != '\n'){
@@ -155,12 +158,7 @@ SPCommand spParserPraseLine(const char* str){
 		}
 		command.cmd = comms[curr_cmd];
 		command.arg = col;
-		if(1<= col && col <= SP_FIAR_GAME_N_COLUMNS){
-			command.validArg = true;
-		}
-		else{
-			command.validArg = false;
-		}
+		command.validArg = true;
 		return command;
 	}
 	return command;
