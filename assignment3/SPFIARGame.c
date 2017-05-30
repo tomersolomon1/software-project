@@ -436,9 +436,6 @@ int diagonal_winning(SPFiarGame* src) {
 * SP_FIAR_GAME_TIE_SYMBOL - If the game is over and there's a tie
 * null character - otherwise
 */
-char spFiarCheckWinner(SPFiarGame* src){
-	return SP_FIAR_GAME_TIE_SYMBOL ;
-}
 
 char spFiarCheckWinner(SPFiarGame* src){
 	char winner; /* defualt value: null char */
