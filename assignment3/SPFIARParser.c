@@ -49,7 +49,7 @@ bool spParserIsInt(const char* str){
 	return true;
 }
 
-int get_place_1st_nonspace_char(char* str){
+int get_place_1st_nonspace_char(const char* str){
 	int i = 0;
 	char first_nonspace_char = str[i];
 	while(first_nonspace_char != '\n' && first_nonspace_char != ' ' && first_nonspace_char != '\0'){
@@ -59,7 +59,7 @@ int get_place_1st_nonspace_char(char* str){
 	return i;
 }
 
-bool is_str1_begins_with_str2(char* str1, char* str2){
+bool is_str1_begins_with_str2(const char* str1, const char* str2){
 	if(strlen(str1) < strlen(str2)){
 		return false;
 	}
@@ -84,11 +84,11 @@ bool is_str1_begins_with_str2(char* str1, char* str2){
  *              is valid
  *   arg      - the integer argument in case validArg is set to true
  */
-SPCommand spParserPraseLine(char* str){
-	SPCommand* command = (SPCommand*) malloc(sizeof(SPCommand));
-	command->arg = 0;
-	command->validArg = false;
-	command->cmd = SP_INVALID_LINE;
+SPCommand spParserPraseLine(const char* str){
+	SPCommand command;
+	command.arg = 0;
+	command.validArg = false;
+	command.cmd = SP_INVALID_LINE;
 
 	const char* commands[5];
 	commands[0] = "suggest_move";
@@ -97,7 +97,7 @@ SPCommand spParserPraseLine(char* str){
 	commands[3] = "quit";
 	commands[4] = "restart_game";
 
-	SP_COMMAND* comms[5];
+	SP_COMMAND comms[5];
 	comms[0] = SP_SUGGEST_MOVE;
 	comms[1] = SP_UNDO_MOVE;
 	comms[2] = SP_ADD_DISC;
@@ -131,15 +131,15 @@ SPCommand spParserPraseLine(char* str){
 	curr_pointer += get_place_1st_nonspace_char(str + curr_pointer); // now curr_pointer points the second nonspace char
 
 	if(is_begin_ok && curr_cmd != 2){ //no more parameters
-		if(str[curr_pointer] == '\0' || str[curr_pointer] == "\n"){
-			command->cmd = comms[curr_cmd];
+		if(str[curr_pointer] == '\0' || str[curr_pointer] == '\n'){
+			command.cmd = comms[curr_cmd];
 		}
 		return command;
 	}
 	else if(is_begin_ok && curr_cmd == 2){
 		bool had_number = false;
 		int col = 0;
-		while(str[curr_pointer] != '\0' && str[curr_pointer] != "\n"){
+		while(str[curr_pointer] != '\0' && str[curr_pointer] != '\n'){
 			if('0' <= str[curr_pointer] && str[curr_pointer] <= '9'){
 				had_number = true;
 				col = col * 10;
@@ -153,13 +153,13 @@ SPCommand spParserPraseLine(char* str){
 		if(!had_number){
 			return command;
 		}
-		command->cmd = comms[curr_cmd];
-		command->arg = col;
+		command.cmd = comms[curr_cmd];
+		command.arg = col;
 		if(1<= col && col <= SP_FIAR_GAME_N_COLUMNS){
-			command->validArg = true;
+			command.validArg = true;
 		}
 		else{
-			command->validArg = false;
+			command.validArg = false;
 		}
 		return command;
 	}
