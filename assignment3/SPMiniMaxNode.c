@@ -72,16 +72,24 @@ void update_best_move(move_value* this_move, int value, int ci, char current_pla
 
 /* checks if the game is over, and updates this
  * return 1 if the game is over
- * otherwise, return 0 */
+ * otherwise, return 0
+ * also, setting this_move.value = INT_MAX (if player 1 has won), this_move.value = INT_MIN (if player 2 has won)
+ * and this_move.value = 0 (if it's a tie)
+ */
 int is_game_over(SPFiarGame* game_copy, move_value* this_move) {
 	char game_status = spFiarCheckWinner(game_copy);
 	if (game_status == SP_FIAR_GAME_PLAYER_1_SYMBOL) {
-
+		this_move = INT_MAX;
+		return -1;
+	} else if (game_status == SP_FIAR_GAME_PLAYER_2_SYMBOL) {
+		this_move = INT_MIN;
+		return -1;
+	} else if (game_status == SP_FIAR_GAME_TIE_SYMBOL) {
+		this_move = 0;
+		return -1;
 	}
-	return 1;
+	return 1; /* otherwise, no one has won and it's not a tie */
 }
-
-
 
 
 /* assuming maxDepth >= 1*/
