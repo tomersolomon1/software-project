@@ -127,6 +127,13 @@ bool spFiarGameIsValidMove(SPFiarGame* src, int col);
 SP_FIAR_GAME_MESSAGE spFiarGameUndoPrevMove(SPFiarGame* src);
 
 /**
+ * helping function for spFiarGameUndoPrevMove:
+ * the function actually does an Undo move,
+ * assuming everything is valid
+ * */
+void spFiarGameUndoPrevMove2(SPFiarGame* src);
+
+/**
  * On success, the function prints the board game. If an error occurs, then the
  * function does nothing. The characters 'X' and 'O' are used to represent
  * the discs of player 1 and player 2, respectively.
