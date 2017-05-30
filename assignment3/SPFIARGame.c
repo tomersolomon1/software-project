@@ -462,7 +462,7 @@ char spFiarCheckWinner(SPFiarGame* src){
 		}
 	}
 
-	if (is_board_full(src)) { /* checking if the game is full - and therefore a tie */
+	if (is_board_full(src)) { /* checking if the game is full - and therefore a tie  */
 		return SP_FIAR_GAME_TIE_SYMBOL;
 	}
 
