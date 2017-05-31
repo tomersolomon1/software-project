@@ -72,7 +72,7 @@ SPFiarGame* spFiarGameCopy(SPFiarGame* src){
 		dst->tops[i] = (src->tops)[i];
 	}
 	for(int i = 0; i < SP_FIAR_GAME_N_ROWS; i++){
-		for(int j = 0; i < SP_FIAR_GAME_N_COLUMNS; j++){
+		for(int j = 0; j < SP_FIAR_GAME_N_COLUMNS; j++){
 			dst->gameBoard[i][j] = (src->gameBoard)[i][j];
 		}
 	}
@@ -256,7 +256,10 @@ char spFiarGameGetCurrentPlayer(SPFiarGame* src){
 	return SP_FIAR_GAME_EMPTY_ENTRY;
 }
 
-
+/*
+ * checking if the board is full,
+ * if its full return 1, else 0
+ * */
 int is_board_full(SPFiarGame* game_copy) {
 	for (int ci = 0; ci < SP_FIAR_GAME_N_COLUMNS; ci++) {
 		if (game_copy->tops[ci] < SP_FIAR_GAME_N_ROWS) {
@@ -314,7 +317,6 @@ char sequence_of_four(SPFiarGame* game_copy, int ri, int ci, int delta_r, int de
 * SP_FIAR_GAME_TIE_SYMBOL - If the game is over and there's a tie
 * null character - otherwise
 */
-
 char spFiarCheckWinner(SPFiarGame* src){
 	char winning_seq_symbol;
 	for (int ri = 0; ri < SP_FIAR_GAME_N_ROWS; ri++) {
