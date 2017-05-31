@@ -8,7 +8,7 @@
 #include "SPFIARGame.h"
 #define HISTORY_SIZE 10
 
-int main(){
+int main1000(){
 	unsigned int depth = 3;
 	SPFiarGame* game = spFiarGameCreate(HISTORY_SIZE * 2);
 
@@ -25,4 +25,5 @@ int main(){
 	col_for_comp_move = spMinimaxSuggestMove(game, depth);
 	spFiarGameSetMove(game, col_for_comp_move);
 	spFiarGamePrintBoard(game);
+	return 0;
 }
