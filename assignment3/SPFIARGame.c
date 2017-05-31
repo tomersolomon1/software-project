@@ -395,7 +395,7 @@ int diagonal_winning(SPFiarGame* src) {
 * null character - otherwise
 */
 
-char spFiarCheckWinner(SPFiarGame* src){
+char spFiarCheckWinner2(SPFiarGame* src){
 	int diagonal_winner = diagonal_winning(src);
 	if (diagonal_winner != 0) {
 		if (diagonal_winner == 1)
@@ -463,7 +463,7 @@ char sequence_of_four(SPFiarGame* game_copy, int ri, int ci, int delta_r, int de
 	}
 }
 
-char spFiarCheckWinner2(SPFiarGame* src){
+char spFiarCheckWinner(SPFiarGame* src){
 	char winning_seq_symbol;
 	int somebody_won = 0;
 	for (int ri = 0; ri < SP_FIAR_GAME_N_ROWS; ri++) {

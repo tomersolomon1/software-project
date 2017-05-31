@@ -136,26 +136,6 @@ int evaluate_board(SPFiarGame* currentGame) {
 	return inner_product(sequences_counter, weights);
 }
 
-/* creating another copy of SPFiarGame - for MiniMax algo
- * to be deleted - duplicate!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
-SPFiarGame* copy_board(SPFiarGame* game) {
-	SPFiarGame* new_game = (SPFiarGame *) malloc(sizeof(SPFiarGame));
-	if (new_game == NULL) {
-		return NULL;
-	} else {
-		for (int ri = 0; ri < SP_FIAR_GAME_N_ROWS; ri++) {
-				for (int cj = 0; cj < SP_FIAR_GAME_N_COLUMNS; cj++) {
-					new_game->gameBoard[ri][cj] = game->gameBoard[ri][cj];
-				}
-			}
-			for (int ci = 0; ci < SP_FIAR_GAME_N_COLUMNS; ci++) {
-				new_game->tops[ci] = game->tops[ci];
-			}
-			new_game->currentPlayer = game->currentPlayer;
-			return new_game;
-	}
-}
-
 int spMinimaxSuggestMove(SPFiarGame* currentGame, unsigned int maxDepth) {
 	SPFiarGame* game_copy = spFiarGameCopy(currentGame);
 	if (game_copy != NULL) {
@@ -203,6 +183,11 @@ int is_the_game_over(SPFiarGame* game_copy, move_value* this_move) {
 	return 1; /* otherwise, no one has won and it's not a tie */
 }
 
+char get_symbol(char current_player) {
+	char symbol = (current_player == '1' ? SP_FIAR_GAME_PLAYER_1_SYMBOL : SP_FIAR_GAME_PLAYER_2_SYMBOL);
+	return symbol;
+}
+
 
 /* assuming maxDepth >= 1
  * the object of player 1 is to maximize the value-function, and the object of player 2 is to minimize the value-function
@@ -210,7 +195,7 @@ int is_the_game_over(SPFiarGame* game_copy, move_value* this_move) {
 move_value minimaxAlgo(SPFiarGame* game_copy, unsigned int maxDepth) {
 	char current_symbol; /* the symbol of the current player */
 	move_value this_move; /* will contain the best move and it's value */
-	current_symbol = (game_copy->currentPlayer == '1' ? SP_FIAR_GAME_PLAYER_1_SYMBOL : SP_FIAR_GAME_PLAYER_2_SYMBOL);
+	current_symbol = get_symbol(game_copy->currentPlayer);
 	this_move.move = -1; /* default value */
 	this_move.value = (game_copy->currentPlayer == '1' ? (INT_MIN + 1) : (INT_MAX - 1)); /* defualt value for the mini-max algo */
 	if (is_the_game_over(game_copy, &this_move)) { /* checking if the game is over */
