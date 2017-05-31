@@ -5,29 +5,11 @@
  *      Author: sapir
  */
 
-#include <stdbool.h>
-#include <string.h>
-#include "SPFIARGame.h"
+
+#include "SPFIARParser.h"
 
 //specify the maximum line length
-#define SP_MAX_LINE_LENGTH 1024
 
-//a type used to represent a command
-typedef enum {
-	SP_UNDO_MOVE,
-	SP_ADD_DISC,
-	SP_SUGGEST_MOVE,
-	SP_QUIT,
-	SP_RESTART,
-	SP_INVALID_LINE,
-} SP_COMMAND;
-
-//a new type that is used to encapsulate a parsed line
-typedef struct command_t {
-	SP_COMMAND cmd;
-	bool validArg; //is set to true if the line contains a valid argument
-	int arg;
-} SPCommand;
 
 /**
  * Checks if a specified string represents a valid integer. It is recommended
@@ -136,10 +118,12 @@ SPCommand spParserPraseLine(const char* str){
 	if(curr_cmd != 2){ 						//no more parameters
 		if(str[curr_pointer] == '\0' || str[curr_pointer] == '\n'){
 			command.cmd = comms[curr_cmd];
+			command.validArg = true;
 		}
 		return command;
 	}
 	else if(curr_cmd == 2){ 				//need to get coloumn number
+		command.cmd = comms[curr_cmd];
 		bool had_number = false;
 		int col = 0;
 		while(str[curr_pointer] != '\0' && str[curr_pointer] != '\n'){
@@ -156,7 +140,6 @@ SPCommand spParserPraseLine(const char* str){
 		if(!had_number){
 			return command;
 		}
-		command.cmd = comms[curr_cmd];
 		command.arg = col;
 		command.validArg = true;
 		return command;

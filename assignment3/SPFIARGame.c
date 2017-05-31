@@ -1,4 +1,3 @@
-
 /**
  * SPFIARGame Summary:
  *
@@ -16,26 +15,7 @@
  *
  */
 
-//Definitions
-#define SP_FIAR_GAME_SPAN 4
-#define SP_FIAR_GAME_N_ROWS 6
-#define SP_FIAR_GAME_N_COLUMNS 7
-#define SP_FIAR_GAME_PLAYER_1_SYMBOL 'X'
-#define SP_FIAR_GAME_PLAYER_2_SYMBOL 'O'
-#define SP_FIAR_GAME_TIE_SYMBOL '-'
-#define SP_FIAR_GAME_EMPTY_ENTRY ' '
-#define Player1 '1'
-#define Player2 '2'
-
-#include <stdbool.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <stddef.h>
-#include <string.h>
-#include "SPArrayList.h"
 #include "SPFIARGame.h"
-#include <stdio.h>
-
 
 /**
  * Creates a new game with a specified history size. The history size is a
@@ -205,6 +185,15 @@ SP_FIAR_GAME_MESSAGE spFiarGameUndoPrevMove(SPFiarGame* src){
 	return SP_FIAR_GAME_SUCCESS;
 }
 
+/**
+ * checks if there is any history
+ * */
+bool spFiarGameIsUndoPossible(SPFiarGame* src){
+	if(spArrayListSize(src->history) == 0){
+		return false;
+	}
+	return true;
+}
 
 /**
  * On success, the function prints the board game. If an error occurs, then the
@@ -331,36 +320,30 @@ char spFiarCheckWinner(SPFiarGame* src){
 	for (int ri = 0; ri < SP_FIAR_GAME_N_ROWS; ri++) {
 		winning_seq_symbol = sequence_of_four(src, ri, 0, 0, 1); /* check the row */
 		if (winning_seq_symbol != ' ') {
-			printf("found a winner! - ri: %d, ci: %d, delta_r: %d, delta_c: %d\n", ri, 0, 0, 1);
 			return winning_seq_symbol;
 		}
 		winning_seq_symbol = sequence_of_four(src, ri, 0, 1, 1); /* check the diagonal - right-up*/
 		if (winning_seq_symbol != ' ') {
-			printf("found a winner! - ri: %d, ci: %d, delta_r: %d, delta_c: %d\n", ri, 0, 1, 1);
 			return winning_seq_symbol;
 		}
 		winning_seq_symbol = sequence_of_four(src, ri, 0, -1, 1); /* check the diagonal - right-down*/
 		if (winning_seq_symbol != ' ') {
-			printf("found a winner! - ri: %d, ci: %d, delta_r: %d, delta_c: %d\n", ri, 0, -1, 1);
 			return winning_seq_symbol;
 		}
 	}
 	for (int ri = 0; ri < SP_FIAR_GAME_N_ROWS; ri++) {
 		winning_seq_symbol = sequence_of_four(src, ri, SP_FIAR_GAME_N_COLUMNS-1, 1, 1); /* check the diagonal - left-up*/
 		if (winning_seq_symbol != ' ') {
-			printf("found a winner! - ri: %d, ci: %d, delta_r: %d, delta_c: %d\n", ri, SP_FIAR_GAME_N_COLUMNS-1, 1, 1);
 			return winning_seq_symbol;
 		}
 		winning_seq_symbol = sequence_of_four(src, ri, SP_FIAR_GAME_N_COLUMNS-1, -1, -1); /* check the diagonal - left-down*/
 		if (winning_seq_symbol != ' ') {
-			printf("found a winner! - ri: %d, ci: %d, delta_r: %d, delta_c: %d\n", ri, SP_FIAR_GAME_N_COLUMNS-1, -1, -1);
 			return winning_seq_symbol;
 		}
 	}
 	for (int ci = 0; ci < SP_FIAR_GAME_N_COLUMNS; ci++) {
 		winning_seq_symbol = sequence_of_four(src, 0, ci, 1, 0);
 		if (winning_seq_symbol != ' ') {
-			printf("found a winner! - ri: %d, ci: %d, delta_r: %d, delta_c: %d\n", 0, ci, 1, 0);
 			return winning_seq_symbol;
 		}
 	}
@@ -370,5 +353,3 @@ char spFiarCheckWinner(SPFiarGame* src){
 
 	return '\0';
 }
-
-

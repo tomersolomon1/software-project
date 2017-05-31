@@ -17,7 +17,6 @@ static bool spParserCheckIsInt() {
 	ASSERT_TRUE(spParserIsInt("-0111"));
 	return true;
 }
-/*
 static bool spParserCheckParseLine() {
 	SPCommand cmd;
 	cmd = spParserPraseLine("add_disc 17");
@@ -29,9 +28,9 @@ static bool spParserCheckParseLine() {
 	cmd = spParserPraseLine("aDd_disc 17");
 	ASSERT_TRUE(cmd.cmd == SP_INVALID_LINE && !cmd.validArg);
 	return true;
-} */
+}
 int main3() {
 	RUN_TEST(spParserCheckIsInt);
-	// RUN_TEST(spParserCheckParseLine);
+	RUN_TEST(spParserCheckParseLine);
 	return 0;
 }

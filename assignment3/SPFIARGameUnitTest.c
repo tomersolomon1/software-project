@@ -79,12 +79,12 @@ static bool spFIARGameBasicTest() {
 	return true;
 }
 
-int main() {
-	/* //RUN_TEST(spFIARGameBasicTest); */
-	//RUN_TEST(spFiarGameSetMoveTest);
-	//RUN_TEST(spFiarGameUndoMoveTest);
-	//RUN_TEST(spFiarGameUndoMoveTest2);
-	//RUN_TEST(spFiarGameValidMoveTest);
+int main5(){
+	RUN_TEST(spFIARGameBasicTest);
+	RUN_TEST(spFiarGameSetMoveTest);
+	RUN_TEST(spFiarGameUndoMoveTest);
+	RUN_TEST(spFiarGameUndoMoveTest2);
+	RUN_TEST(spFiarGameValidMoveTest);
 
 	srand(time(NULL));
 	SPFiarGame* res = spFiarGameCreate(HISTORY_SIZE);
@@ -104,7 +104,5 @@ int main() {
 			break;
 		}
 	}
-
-
 	return 0;
 }

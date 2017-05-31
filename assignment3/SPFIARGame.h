@@ -165,4 +165,9 @@ char spFiarGameGetCurrentPlayer(SPFiarGame* src);
 */
 char spFiarCheckWinner(SPFiarGame* src);
 
+/**
+ * checks if there is any history
+ * */
+bool spFiarGameIsUndoPossible(SPFiarGame* src);
+
 #endif

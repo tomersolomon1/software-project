@@ -5,59 +5,7 @@
  *      Author: sapir
  */
 
-/**
- * SPArrayList summary:
- *
- * A container that represents a fixed size linked list. The capcity of the list
- * is specified at the creation. The container supports typical list
- * functionalities with the addition of random access as in arrays.
- * Upon insertion, if the maximum capacity is reached then an error message is
- * returned and the list is not affected. A summary of the supported functions
- * is given below:
- *
- * spArrayListCreate       - Creates an empty array list with a specified
- *                           max capacity.
- * spArrayListCopy         - Creates an exact copy of a specified array list.
- * spArrayListDestroy      - Frees all memory resources associated with an array
- *                           list.
- * spArrayListClear        - Clears all elements from a specified array list.
- * spArrayListAddAt        - Inserts an element at a specified index, elements
- *                           will be shifted to make place.
- * spArrayListAddFirst     - Inserts an element at the beginning of the array
- *                           list, elements will be shifted to make place.
- * spArrayListAddLast      - Inserts an element at the end of the array list.
- * spArrayListRemoveAt     - Removes an element at the specified index, elements
- *                           elements will be shifted as a result.
- * spArrayListRemoveFirst  - Removes an element from the beginning of the array
- *                           list, elements will be shifted as a result.
- * spArrayListRemoveLast   - Removes an element from the end of the array list
- * spArrayListGetAt        - Accesses the element at the specified index.
- * spArrayListGetFirst     - Accesses the first element of the array list.
- * spArrayListGetLast      - Accesses the last element of the array list.
- * spArrayListMaxCapcity   - Returns the maximum capcity of the array list.
- * spArrayListSize         - Returns the number of elements in that array list.
- * spArrayListIsFull       - Returns if the array list reached its max capacity.
- * spArrayListIsEmpty      - Returns true if the array list contains no elements.
- */
-
-#include <stdbool.h>
-#include <stdlib.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <string.h>
-
-typedef struct sp_array_list_t {
-	int* elements;
-	int actualSize;
-	int maxSize;
-} SPArrayList;
-
-typedef enum sp_array_list_message_t {
-	SP_ARRAY_LIST_SUCCESS,
-	SP_ARRAY_LIST_INVALID_ARGUMENT,
-	SP_ARRAY_LIST_FULL,
-	SP_ARRAY_LIST_EMPTY
-} SP_ARRAY_LIST_MESSAGE;
+#include "SPArrayList.h"
 
 /**
  *  Creates an empty array list with the specified maximum capacity.
@@ -384,7 +332,7 @@ SP_ARRAY_LIST_MESSAGE spArrayListPushFirst(SPArrayList* src, int elem){
 }
 
 /**
- * print list
+ * print the list
  * */
 void spArrayListPrint(SPArrayList* src){
 	for(int i=0; i<src->actualSize; i++){
