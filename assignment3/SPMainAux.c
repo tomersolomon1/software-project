@@ -107,6 +107,7 @@ bool is_command_ok(SPCommand cmd, SPFiarGame* game){
 bool make_command(SPCommand cmd, SPFiarGame* game, unsigned int depth){
 	SP_FIAR_GAME_MESSAGE game_msg = SP_FIAR_GAME_INVALID_MOVE;
 	if(cmd.cmd == SP_UNDO_MOVE){
+		int col_undo = spArrayListGetFirst(game->history);
 		game_msg = spFiarGameUndoPrevMove(game);
 		if(game_msg != SP_FIAR_GAME_SUCCESS){
 			printf("Error: spFiarGameUndoPrevMove has failed");
@@ -114,6 +115,9 @@ bool make_command(SPCommand cmd, SPFiarGame* game, unsigned int depth){
 			spFiarGameDestroy(game);
 			exit(0);
 		}
+		printf("Remove disc: remove computer’s disc at column %d\n", col_undo + 1);
+		fflush(stdout);
+		col_undo = spArrayListGetFirst(game->history);
 		game_msg = spFiarGameUndoPrevMove(game);
 		if(game_msg != SP_FIAR_GAME_SUCCESS){
 			printf("Error: spFiarGameUndoPrevMove has failed");
@@ -121,6 +125,8 @@ bool make_command(SPCommand cmd, SPFiarGame* game, unsigned int depth){
 			spFiarGameDestroy(game);
 			exit(0);
 		}
+		printf("Remove disc: remove user’s disc at column %d\n", col_undo + 1);
+		fflush(stdout);
 		return true;
 	}
 	else if(cmd.cmd == SP_ADD_DISC){
@@ -137,10 +143,14 @@ bool make_command(SPCommand cmd, SPFiarGame* game, unsigned int depth){
 		return true;
 	}
 	else if(cmd.cmd == SP_QUIT){
+		printf("Exiting…\n");
+		fflush(stdout);
 		spFiarGameDestroy(game);
 		exit(0);
 	}
 	else if(cmd.cmd == SP_RESTART){
+		printf("Game restarted!\n");
+		fflush(stdout);
 		spFiarGameDestroy(game);
 		return false;
 	}
@@ -177,8 +187,7 @@ void computer_move(SPFiarGame* game, unsigned int depth){
 			spFiarGameDestroy(game);
 			exit(0);
 		}
+		printf("Computer move: add disc to column %d\n", col_for_comp_move + 1);
+		fflush(stdout);
 	}
 }
-
-
-
