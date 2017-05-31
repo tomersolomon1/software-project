@@ -306,7 +306,7 @@ char sequence_of_four(SPFiarGame* game_copy, int ri, int ci, int delta_r, int de
 		}
 	}
 	if (sequence_len == 4) {
-		return current_symbol; /* the player that has won */
+		return current_symbol; /* the player that has won  */
 	} else {
 		return empty_symbol;
 	}
