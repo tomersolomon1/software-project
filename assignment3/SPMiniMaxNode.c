@@ -29,6 +29,7 @@ int winning_value(int winner) {
 	return value;
 }
 
+/* assuming symbol is either the symbol of player 1 ot player 2 */
 void update_sequences_length(char symbol, int *player1_seq, int *player2_seq) {
 	if (symbol == SP_FIAR_GAME_PLAYER_1_SYMBOL) {
 		*player1_seq += 1;
@@ -63,7 +64,7 @@ int span_row_right(SPFiarGame* currentGame, int ri, int cj, int sequences_counte
 	return span_sumup(player1_counter, player2_counter, sequences_counter);
 }
 
-/* compute sequences in column - up-wise
+/* compute sequences in column - up-ward
  * returning 0 means no winner, 1 means player 1 won, 2 means player 2 won
  */
 int span_column_up(SPFiarGame* currentGame, int ri, int cj, int sequences_counter[]) {
@@ -71,13 +72,13 @@ int span_column_up(SPFiarGame* currentGame, int ri, int cj, int sequences_counte
 	int player2_counter = 0;
 	if (ri+3 < SP_FIAR_GAME_N_ROWS) {
 		for (int k = 0; k < 4; k++) {
-			update_sequences_length(currentGame->gameBoard[ri][cj+k], &player1_counter, &player2_counter);
+			update_sequences_length(currentGame->gameBoard[ri+k][cj], &player1_counter, &player2_counter);
 		}
 	}
 	return span_sumup(player1_counter, player2_counter, sequences_counter);
 }
 
-/* compute sequences in diagonal - upright
+/* compute sequences in diagonal - up-right-ward
  * returning 0 means no winner, 1 means player 1 won, 2 means player 2 won
  */
 int span_diagonal_upright(SPFiarGame* currentGame, int ri, int cj, int sequences_counter[]) {
@@ -85,13 +86,13 @@ int span_diagonal_upright(SPFiarGame* currentGame, int ri, int cj, int sequences
 	int player2_counter = 0;
 	if ((ri+3 < SP_FIAR_GAME_N_ROWS) && (cj+3 < SP_FIAR_GAME_N_COLUMNS)) {
 		for (int k = 0; k < 4; k++) {
-			update_sequences_length(currentGame->gameBoard[ri][cj+k], &player1_counter, &player2_counter);
+			update_sequences_length(currentGame->gameBoard[ri+k][cj+k], &player1_counter, &player2_counter);
 		}
 	}
 	return span_sumup(player1_counter, player2_counter, sequences_counter);
 }
 
-/* compute sequences in diagonal - upleft
+/* compute sequences in diagonal - up-left
  * returning 0 means no winner, 1 means player 1 won, 2 means player 2 won
  */
 int span_diagonal_upleft(SPFiarGame* currentGame, int ri, int cj, int sequences_counter[]) {
@@ -99,14 +100,14 @@ int span_diagonal_upleft(SPFiarGame* currentGame, int ri, int cj, int sequences_
 	int player2_counter = 0;
 	if ((ri+3 < SP_FIAR_GAME_N_ROWS) && (cj-3 >= 0)) {
 		for (int k = 0; k < 4; k++) {
-			update_sequences_length(currentGame->gameBoard[ri][cj+k], &player1_counter, &player2_counter);
+			update_sequences_length(currentGame->gameBoard[ri+k][cj-k], &player1_counter, &player2_counter);
 		}
 	}
 	return span_sumup(player1_counter, player2_counter, sequences_counter);
 }
 
 /*
- * the algorithm: calculating sequences of player 1 & 2, and then sum it up with the weights vector [-5, -2, -1, 1, 2, 5]
+ * the algorithm: calculating sequences of player 1 & 2, and then sum it up with the weights vector [-5, -2, -1, 0, 1, 2, 5]
  * operates in O(n) complexity
  */
 int evaluate_board(SPFiarGame* currentGame) {
@@ -119,27 +120,27 @@ int evaluate_board(SPFiarGame* currentGame) {
 			if (somebody_won != 0) {
 				return winning_value(somebody_won);
 			}
-			span_diagonal_upright(currentGame, ri, cj, sequences_counter);
+			somebody_won = span_diagonal_upright(currentGame, ri, cj, sequences_counter);
 			if (somebody_won != 0) {
 				return winning_value(somebody_won);
 			}
-			span_row_right(currentGame, ri, cj, sequences_counter);
+			somebody_won = span_row_right(currentGame, ri, cj, sequences_counter);
 			if (somebody_won != 0) {
 				return winning_value(somebody_won);
 			}
-			span_column_up(currentGame, ri, cj, sequences_counter);
+			somebody_won = span_column_up(currentGame, ri, cj, sequences_counter);
 			if (somebody_won != 0) {
 				return winning_value(somebody_won);
 			}
 		}
 	}
-	return inner_product(sequences_counter, weights);
+	return inner_product(sequences_counter, weights); /* if we got here it means no one has won so far */
 }
 
+/* we can assume the game is not over - there is at least one legal move, and the nobody has won yet */
 int spMinimaxSuggestMove(SPFiarGame* currentGame, unsigned int maxDepth) {
 	SPFiarGame* game_copy = spFiarGameCopy(currentGame);
 	if (game_copy != NULL) {
-		//if (game_is_not_over) - should implement
 		move_value best_move;
 		best_move = minimaxAlgo(game_copy, maxDepth);
 		spFiarGameDestroy(game_copy);
@@ -155,10 +156,10 @@ int spMinimaxSuggestMove(SPFiarGame* currentGame, unsigned int maxDepth) {
 	}
 }
 
-void update_best_move(move_value* this_move, int value, int ci, char current_player) {
-	if ((current_player == '1' && value > this_move->value) || (current_player == '2' && value < this_move->value)) {
-			this_move->value = value;
-			this_move->move = ci;
+void update_best_move(move_value* best_move_so_far, int value, int move, char current_player) {
+	if ((current_player == '1' && value > best_move_so_far->value) || (current_player == '2' && value < best_move_so_far->value)) {
+		best_move_so_far->value = value;
+		best_move_so_far->move = move;
 	}
 }
 
@@ -188,51 +189,49 @@ char get_symbol(char current_player) {
 	return symbol;
 }
 
-
 /* assuming maxDepth >= 1
  * the object of player 1 is to maximize the value-function, and the object of player 2 is to minimize the value-function
  * by default, |this_move.value| < INT_MAX, since value = INT_MAX is means the winning of player 1 (similarly, INT_MIN means the winning of player 2) */
 move_value minimaxAlgo(SPFiarGame* game_copy, unsigned int maxDepth) {
-	char current_symbol; /* the symbol of the current player */
-	move_value this_move; /* will contain the best move and it's value */
-	current_symbol = get_symbol(game_copy->currentPlayer);
-	this_move.move = -1; /* default value */
-	this_move.value = (game_copy->currentPlayer == '1' ? (INT_MIN + 1) : (INT_MAX - 1)); /* defualt value for the mini-max algo */
-	if (is_the_game_over(game_copy, &this_move)) { /* checking if the game is over */
-		return this_move;
+	char current_symbol =  get_symbol(game_copy->currentPlayer); /* the symbol of the current player */
+	move_value best_move; /* will contain the best move for the player and it's value */
+	best_move.move = -1; /* default value */
+	best_move.value = (game_copy->currentPlayer == '1' ? (INT_MIN + 1) : (INT_MAX - 1)); /* default value for the mini-max algo */
+	if (is_the_game_over(game_copy, &best_move)) { /* checking if the game is over, and if so - this_move.move will be -1 */
+		return best_move;
 	}
 
 	if (maxDepth == 1) { /* halting condition */
 		for (int ci = 0; ci < SP_FIAR_GAME_N_COLUMNS; ci++) {
-			int top_row_ci = game_copy->tops[ci]; /* to be changed to is-valid-move */
+			int top_row_ci = game_copy->tops[ci]; /* the first available row in this column  */
 			if (top_row_ci < SP_FIAR_GAME_N_ROWS) { /* column isn't full */
-				game_copy->gameBoard[top_row_ci][ci] = current_symbol; /* if game_copy->currentPlayer == 1 then put 'X', otherwise put 'O'*/
-				game_copy->tops[ci] = game_copy->tops[ci] + 1; /* increasing tops[ci] */
-				int game_value = evaluate_board(game_copy);
-				update_best_move(&this_move, game_value, ci, game_copy->currentPlayer); /* update best move, if necessary */
+				game_copy->gameBoard[top_row_ci][ci] = current_symbol; /* if game_copy->currentPlayer == 1 then put 'X', otherwise put 'O' */
+				game_copy->tops[ci] = game_copy->tops[ci] + 1; /* increasing tops[ci] by 1 */
+				int game_value = evaluate_board(game_copy); /* evaluating the board */
+				update_best_move(&best_move, game_value, ci, game_copy->currentPlayer); /* update best move, if necessary */
 				game_copy->gameBoard[top_row_ci][ci] = ' '; /* restoring game_copy->gameBoard[top_ci][i] to be empty again */
-				game_copy->tops[ci] = game_copy->tops[ci] - 1; /* decreasing tops[ci] */
+				game_copy->tops[ci] = game_copy->tops[ci] - 1; /* decreasing tops[ci] by 1 */
 			}
 		}
-		return this_move;
-	} else { /* maxDepth > 1, need for recursion */
+	} else { /* maxDepth > 1, need for recursion calls */
 		game_copy->currentPlayer = (game_copy->currentPlayer == '1' ? '2' : '1'); /* changing the turn*/
-		for (int ci = 0; ci < SP_FIAR_GAME_N_COLUMNS; ci++) {
+		for (int move_ci = 0; move_ci < SP_FIAR_GAME_N_COLUMNS; move_ci++) {
 			move_value next_move;
-			int top_row_ci = game_copy->tops[ci];
+			int top_row_ci = game_copy->tops[move_ci];
 			if (top_row_ci < SP_FIAR_GAME_N_ROWS) { /* column isn't full */
-				game_copy->gameBoard[top_row_ci][ci] = current_symbol; /* if game_copy->currentPlayer == 1 then put 'X', otherwise put 'O'*/
-				game_copy->tops[ci] = game_copy->tops[ci] + 1; /* increasing tops[ci] */
+				game_copy->gameBoard[top_row_ci][move_ci] = current_symbol; /* if game_copy->currentPlayer == 1 then put 'X', otherwise put 'O'*/
+				game_copy->tops[move_ci] = game_copy->tops[move_ci] + 1; /* increasing tops[ci] */
 				next_move = minimaxAlgo(game_copy, maxDepth - 1);
-				update_best_move(&this_move, next_move.value, ci, game_copy->currentPlayer); /* update best move, if necessary */
-				game_copy->tops[ci] = game_copy->tops[ci] - 1; /* decreasing tops[ci] */
-				game_copy->gameBoard[top_row_ci][ci] = ' '; /* restoring game_copy->gameBoard[top_ci][i] to be empty again */
-				if ((next_move.move == -1) && (next_move.value == INT_MIN || next_move.value == INT_MAX)) { /* this was a winning move! */
+				/* update best move, if necessary - if this move just won the the game or made it a tie it will the recursion will fold-back immediately  */
+				update_best_move(&best_move, next_move.value, move_ci, game_copy->currentPlayer);
+				game_copy->tops[move_ci] = game_copy->tops[move_ci] - 1; /* decreasing tops[ci] */
+				game_copy->gameBoard[top_row_ci][move_ci] = ' '; /* restoring game_copy->gameBoard[top_ci][i] to be empty again */
+				if ((next_move.move == -1) && (next_move.value == INT_MIN || next_move.value == INT_MAX)) { /* this was probably a winning move! */
 					break; /* no need for further evaluations, found the best move - somebody has just won the game! */
 				}
 			}
 		}
 		game_copy->currentPlayer = (game_copy->currentPlayer == '1' ? '2' : '1'); /* changing the turn back */
 	}
-	return this_move;
+	return best_move;
 }
