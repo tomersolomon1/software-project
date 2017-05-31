@@ -8,7 +8,7 @@
 #include "SPBufferset.h"
 #include <stdio.h>
 
-int main() {
+int main2() {
 	SP_BUFF_SET();
 	int heaps[MAX_HEAPS] = { 0 };
 	int move_vec[2] = { 0 };
