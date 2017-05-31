@@ -139,10 +139,20 @@ int evaluate_board(SPFiarGame* currentGame) {
 
 /* we can assume the game is not over - there is at least one legal move, and the nobody has won yet */
 int spMinimaxSuggestMove(SPFiarGame* currentGame, unsigned int maxDepth) {
+	printf("suggest-move!\n"); /* for debugging */
+	fflush(stdout);
 	SPFiarGame* game_copy = spFiarGameCopy(currentGame);
+	printf("copied board!\n"); /* for debugging */
+	fflush(stdout);
 	if (game_copy != NULL) {
 		move_value best_move;
+		printf("board before suggest move:\n");
+		fflush(stdout);
+		spFiarGamePrintBoard(game_copy);
+
 		best_move = minimaxAlgo(game_copy, maxDepth);
+		printf("suggest-move - suggested move: %d, suggested-move-value: %d\n", best_move.move, best_move.value);
+		fflush(stdout);
 		spFiarGameDestroy(game_copy);
 		if (best_move.move != -1) {
 			return best_move.move;
@@ -157,7 +167,11 @@ int spMinimaxSuggestMove(SPFiarGame* currentGame, unsigned int maxDepth) {
 }
 
 void update_best_move(move_value* best_move_so_far, int value, int move, char current_player) {
+	printf("update move!\n");
+	fflush(stdout);
 	if ((current_player == '1' && value > best_move_so_far->value) || (current_player == '2' && value < best_move_so_far->value)) {
+		printf("update move!\n");
+		fflush(stdout);
 		best_move_so_far->value = value;
 		best_move_so_far->move = move;
 	}
@@ -173,15 +187,15 @@ int is_the_game_over(SPFiarGame* game_copy, move_value* this_move) {
 	char game_status = spFiarCheckWinner(game_copy);
 	if (game_status == SP_FIAR_GAME_PLAYER_1_SYMBOL) { /* player 1 has won */
 		this_move->value = INT_MAX;
-		return -1;
+		return 1;
 	} else if (game_status == SP_FIAR_GAME_PLAYER_2_SYMBOL) { /* player 2 has won */
 		this_move->value = INT_MIN;
-		return -1;
+		return 1;
 	} else if (game_status == SP_FIAR_GAME_TIE_SYMBOL) { /* it's a tie */
 		this_move = 0;
-		return -1;
+		return 1;
 	}
-	return 1; /* otherwise, no one has won and it's not a tie */
+	return 0; /* otherwise, no one has won and it's not a tie */
 }
 
 char get_symbol(char current_player) {
@@ -193,11 +207,17 @@ char get_symbol(char current_player) {
  * the object of player 1 is to maximize the value-function, and the object of player 2 is to minimize the value-function
  * by default, |this_move.value| < INT_MAX, since value = INT_MAX is means the winning of player 1 (similarly, INT_MIN means the winning of player 2) */
 move_value minimaxAlgo(SPFiarGame* game_copy, unsigned int maxDepth) {
+	printf("mini-max algo!, max-depth: %d\n", maxDepth);
+	fflush(stdout);
 	char current_symbol =  get_symbol(game_copy->currentPlayer); /* the symbol of the current player */
 	move_value best_move; /* will contain the best move for the player and it's value */
 	best_move.move = -1; /* default value */
 	best_move.value = (game_copy->currentPlayer == '1' ? (INT_MIN + 1) : (INT_MAX - 1)); /* default value for the mini-max algo */
+	printf("checking if the game is over\n");
+	fflush(stdout);
 	if (is_the_game_over(game_copy, &best_move)) { /* checking if the game is over, and if so - this_move.move will be -1 */
+		printf("the game is over indid\n");
+		fflush(stdout);
 		return best_move;
 	}
 
@@ -233,6 +253,8 @@ move_value minimaxAlgo(SPFiarGame* game_copy, unsigned int maxDepth) {
 		}
 		game_copy->currentPlayer = (game_copy->currentPlayer == '1' ? '2' : '1'); /* changing the turn back */
 	}
+	printf("mini-max algo!, max-depth: %d, best-move: %d, best-move-value: %d\n", maxDepth, best_move.move, best_move.value);
+	fflush(stdout);
 	return best_move;
 }
 
