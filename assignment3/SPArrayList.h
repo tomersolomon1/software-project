@@ -261,7 +261,6 @@ bool spArrayListIsEmpty(SPArrayList* src);
  * push element at first, if the src is full:
  * remove the last element and then add at first
  * **/
-
 SP_ARRAY_LIST_MESSAGE spArrayListPushFirst(SPArrayList* src, int elem);
 
 /**

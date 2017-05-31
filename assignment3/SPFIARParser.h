@@ -49,4 +49,17 @@ bool spParserIsInt(const char* str);
  */
 SPCommand spParserPraseLine(const char* str);
 
+/*
+ * return the place of the first nonspace('\t', ' ') char in str,
+ * if it found '\n' or '\0' before a nonspace,
+ * it will return the place of '\n' \ '\0'
+ * */
+int get_place_1st_nonspace_char(const char* str);
+
+/*
+ * checks if str1 begins with str2
+ * returns true if yes, else false
+ * */
+bool is_str1_begins_with_str2(const char* str1, const char* str2);
+
 #endif

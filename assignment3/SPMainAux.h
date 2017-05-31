@@ -4,6 +4,7 @@
 #include "SPFIARGame.h"
 #include "SPFIARParser.h"
 #include "SPMiniMax.h"
+#include "SPArrayList.h"
 #include <stdio.h>
 #include <ctype.h>
 #include <stdlib.h>

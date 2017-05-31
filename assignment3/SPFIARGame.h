@@ -165,6 +165,18 @@ char spFiarGameGetCurrentPlayer(SPFiarGame* src);
 */
 char spFiarCheckWinner(SPFiarGame* src);
 
+/*
+ * checking if the board is full,
+ * if its full return 1, else 0
+ * */
+int is_board_full(SPFiarGame* game_copy);
+
+/* return 0 if no 4-in-a-row in the sequence that starts at (ri, ci), in (delta_r, delta_c) direction
+ * return 1 if there is 4 in-a-row - for player 1
+ * return 2 if there is 4 in-a-row - for player 2
+ */
+char sequence_of_four(SPFiarGame* game_copy, int ri, int ci, int delta_r, int delta_c);
+
 /**
  * checks if there is any history
  * */
