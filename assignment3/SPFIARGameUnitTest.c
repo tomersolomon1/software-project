@@ -1,7 +1,8 @@
 #include "unit_test_util.h"
 #include "SPFIARGame.h"
 #include <stdbool.h>
-
+#include <time.h>
+#include <stdlib.h>
 #define HISTORY_SIZE 20
 
 static bool spFiarGameValidMoveTest() {
@@ -44,14 +45,12 @@ static bool spFiarGameUndoMoveTest() {
 	while (repeat-- > 0) {
 		for (int i = 0; i < SP_FIAR_GAME_N_COLUMNS; i++) {
 			ASSERT_TRUE(spFiarGameSetMove(res, i) == SP_FIAR_GAME_SUCCESS);
-			spFiarGamePrintBoard(res);
 		}
 	}
 	repeat = 2;
 	while (repeat-- > 0) {
 		for (int i = 0; i < SP_FIAR_GAME_N_COLUMNS; i++) {
 			ASSERT_TRUE(spFiarGameUndoPrevMove(res) == SP_FIAR_GAME_SUCCESS);
-			spFiarGamePrintBoard(res);
 		}
 	}
 	spFiarGamePrintBoard(res);
@@ -81,10 +80,31 @@ static bool spFIARGameBasicTest() {
 }
 
 int main() {
-	RUN_TEST(spFIARGameBasicTest);
-	RUN_TEST(spFiarGameSetMoveTest);
-	RUN_TEST(spFiarGameUndoMoveTest);
-	RUN_TEST(spFiarGameUndoMoveTest2);
-	RUN_TEST(spFiarGameValidMoveTest);
+	//RUN_TEST(spFIARGameBasicTest);
+	//RUN_TEST(spFiarGameSetMoveTest);
+	//RUN_TEST(spFiarGameUndoMoveTest);
+	//RUN_TEST(spFiarGameUndoMoveTest2);
+	//RUN_TEST(spFiarGameValidMoveTest);
+
+	srand(time(NULL));
+	SPFiarGame* res = spFiarGameCreate(HISTORY_SIZE);
+	char c = '\0';
+	int i = 0;
+	while(c != SP_FIAR_GAME_TIE_SYMBOL){
+		i = rand() % 7;
+		SP_FIAR_GAME_MESSAGE op = spFiarGameSetMove(res, i);
+		while(op != SP_FIAR_GAME_SUCCESS){
+			op = spFiarGameSetMove(res, (i++) % 7);
+		}
+		spFiarGamePrintBoard(res);
+		c = spFiarCheckWinner(res);
+		if(c != '\0'){
+			printf("the winner is %c\n", c);
+			fflush(stdout);
+			break;
+		}
+	}
+
+
 	return 0;
 }
