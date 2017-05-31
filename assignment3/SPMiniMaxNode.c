@@ -7,11 +7,13 @@
 #include <limits.h>
 #include <stddef.h>
 
+
 typedef struct move_value_t {
 	int move; /* the column */
 	int value; /* the value of the move, according to the mini-max algo */
 } move_value;
 
+move_value minimaxAlgo(SPFiarGame* game_copy, unsigned int maxDepth);
 
 int inner_product(int v[], int u[]) {
 	int product = 0;
@@ -23,14 +25,22 @@ int inner_product(int v[], int u[]) {
 
 int winning_value(int winner) {
 	int value;
-	winner == 1 ? value = INT_MAX : value = INT_MIN;
+	value = (winner == 1 ? INT_MAX : INT_MIN);
 	return value;
 }
 
-int update_sequences(int player1_counter, int player2_counter, int sequences_counter[]) {
+void update_sequences_length(char symbol, int *player1_seq, int *player2_seq) {
+	if (symbol == SP_FIAR_GAME_PLAYER_1_SYMBOL) {
+		*player1_seq += 1;
+	} else if (symbol == SP_FIAR_GAME_PLAYER_2_SYMBOL) {
+		 *player2_seq += 1;
+	}
+}
+
+int span_sumup(int player1_counter, int player2_counter, int sequences_counter[]) {
 	int somebody_won = 0; /* 0 means no winner, 1 means player 1 won, 2 means player 2 won */
 	if (player1_counter == 4 || player2_counter == 4) {
-		player1_counter == 4 ? somebody_won = 1 : somebody_won = 2;
+		somebody_won = (player1_counter == 4 ? 1 : 2);
 	} else {
 		int sequence_index = player1_counter - player2_counter + 3;
 		sequences_counter[sequence_index] += 1;
@@ -43,15 +53,14 @@ int update_sequences(int player1_counter, int player2_counter, int sequences_cou
  */
 
 int span_row_right(SPFiarGame* currentGame, int ri, int cj, int sequences_counter[]) {
-	int somebody_won = 0;
 	int player1_counter = 0;
 	int player2_counter = 0;
 	if (cj+3 < SP_FIAR_GAME_N_COLUMNS) {
 		for (int k = 0; k < 4; k++) {
-			currentGame->gameBoard[ri][cj+k] == SP_FIAR_GAME_PLAYER_1_SYMBOL ? player1_counter += 1 : player2_counter += 1;
+			update_sequences_length(currentGame->gameBoard[ri][cj+k], &player1_counter, &player2_counter);
 		}
 	}
-	return update_sequences(player1_counter, player2_counter, sequences_counter);
+	return span_sumup(player1_counter, player2_counter, sequences_counter);
 }
 
 /* compute sequences in column - up-wise
@@ -62,10 +71,10 @@ int span_column_up(SPFiarGame* currentGame, int ri, int cj, int sequences_counte
 	int player2_counter = 0;
 	if (ri+3 < SP_FIAR_GAME_N_ROWS) {
 		for (int k = 0; k < 4; k++) {
-			currentGame->gameBoard[ri+k][cj] == SP_FIAR_GAME_PLAYER_1_SYMBOL ? player1_counter += 1 : player2_counter += 1;
+			update_sequences_length(currentGame->gameBoard[ri][cj+k], &player1_counter, &player2_counter);
 		}
 	}
-	return update_sequences(player1_counter, player2_counter, sequences_counter);
+	return span_sumup(player1_counter, player2_counter, sequences_counter);
 }
 
 /* compute sequences in diagonal - upright
@@ -76,10 +85,10 @@ int span_diagonal_upright(SPFiarGame* currentGame, int ri, int cj, int sequences
 	int player2_counter = 0;
 	if ((ri+3 < SP_FIAR_GAME_N_ROWS) && (cj+3 < SP_FIAR_GAME_N_COLUMNS)) {
 		for (int k = 0; k < 4; k++) {
-			currentGame->gameBoard[ri+k][cj+k] == SP_FIAR_GAME_PLAYER_1_SYMBOL ? player1_counter += 1 : player2_counter += 1;
+			update_sequences_length(currentGame->gameBoard[ri][cj+k], &player1_counter, &player2_counter);
 		}
 	}
-	return update_sequences(player1_counter, player2_counter, sequences_counter);
+	return span_sumup(player1_counter, player2_counter, sequences_counter);
 }
 
 /* compute sequences in diagonal - upleft
@@ -90,10 +99,10 @@ int span_diagonal_upleft(SPFiarGame* currentGame, int ri, int cj, int sequences_
 	int player2_counter = 0;
 	if ((ri+3 < SP_FIAR_GAME_N_ROWS) && (cj-3 >= 0)) {
 		for (int k = 0; k < 4; k++) {
-			currentGame->gameBoard[ri+k][cj-k] == SP_FIAR_GAME_PLAYER_1_SYMBOL ? player1_counter += 1 : player2_counter += 1;
+			update_sequences_length(currentGame->gameBoard[ri][cj+k], &player1_counter, &player2_counter);
 		}
 	}
-	return update_sequences(player1_counter, player2_counter, sequences_counter);
+	return span_sumup(player1_counter, player2_counter, sequences_counter);
 }
 
 /*
@@ -102,7 +111,7 @@ int span_diagonal_upleft(SPFiarGame* currentGame, int ri, int cj, int sequences_
  */
 int evaluate_board(SPFiarGame* currentGame) {
 	int sequences_counter[7] = { 0 };
-	int weights[6] = {-5, -2, -1, 0, 1, 2, 5};
+	int weights[7] = {-5, -2, -1, 0, 1, 2, 5};
 	int somebody_won = 0; /* somebody_won = 1 means player 1 won, somebody_won = 2 means player 2 won */
 	for (int ri = 0; ri < SP_FIAR_GAME_N_ROWS; ri++) {
 		for (int cj = 0; cj < SP_FIAR_GAME_N_COLUMNS; cj++) {
@@ -151,7 +160,8 @@ int spMinimaxSuggestMove(SPFiarGame* currentGame, unsigned int maxDepth) {
 	SPFiarGame* game_copy = spFiarGameCopy(currentGame);
 	if (game_copy != NULL) {
 		//if (game_is_not_over) - should implement
-		move_value best_move  = minimaxAlgo(game_copy);
+		move_value best_move;
+		best_move = minimaxAlgo(game_copy, maxDepth);
 		spFiarGameDestroy(game_copy);
 		if (best_move.move != -1) {
 			return best_move.move;
@@ -178,13 +188,13 @@ void update_best_move(move_value* this_move, int value, int ci, char current_pla
  * also, setting this_move.value = INT_MAX (if player 1 has won), this_move.value = INT_MIN (if player 2 has won)
  * and this_move.value = 0 (if it's a tie)
  */
-int is_game_over(SPFiarGame* game_copy, move_value* this_move) {
+int is_the_game_over(SPFiarGame* game_copy, move_value* this_move) {
 	char game_status = spFiarCheckWinner(game_copy);
 	if (game_status == SP_FIAR_GAME_PLAYER_1_SYMBOL) { /* player 1 has won */
-		this_move = INT_MAX;
+		this_move->value = INT_MAX;
 		return -1;
 	} else if (game_status == SP_FIAR_GAME_PLAYER_2_SYMBOL) { /* player 2 has won */
-		this_move = INT_MIN;
+		this_move->value = INT_MIN;
 		return -1;
 	} else if (game_status == SP_FIAR_GAME_TIE_SYMBOL) { /* it's a tie */
 		this_move = 0;
@@ -200,10 +210,10 @@ int is_game_over(SPFiarGame* game_copy, move_value* this_move) {
 move_value minimaxAlgo(SPFiarGame* game_copy, unsigned int maxDepth) {
 	char current_symbol; /* the symbol of the current player */
 	move_value this_move; /* will contain the best move and it's value */
-	game_copy->currentPlayer == '1' ? current_symbol = SP_FIAR_GAME_PLAYER_1_SYMBOL : current_symbol = SP_FIAR_GAME_PLAYER_2_SYMBOL;
+	current_symbol = (game_copy->currentPlayer == '1' ? SP_FIAR_GAME_PLAYER_1_SYMBOL : SP_FIAR_GAME_PLAYER_2_SYMBOL);
 	this_move.move = -1; /* default value */
-	game_copy->currentPlayer == '1' ? this_move.value = (INT_MIN + 1) : this_move.value = (INT_MAX - 1); /* defualt value for the mini-max algo */
-	if (is_game_over(game_copy, &this_move)) { /* checking if the game is over */
+	this_move.value = (game_copy->currentPlayer == '1' ? (INT_MIN + 1) : (INT_MAX - 1)); /* defualt value for the mini-max algo */
+	if (is_the_game_over(game_copy, &this_move)) { /* checking if the game is over */
 		return this_move;
 	}
 
@@ -219,9 +229,9 @@ move_value minimaxAlgo(SPFiarGame* game_copy, unsigned int maxDepth) {
 				game_copy->tops[ci] = game_copy->tops[ci] - 1; /* decreasing tops[ci] */
 			}
 		}
-		return move_value;
+		return this_move;
 	} else { /* maxDepth > 1, need for recursion */
-		game_copy->currentPlayer == '1' ? game_copy->currentPlayer = '2' : game_copy->currentPlayer = '1'; /* changing the turn*/
+		game_copy->currentPlayer = (game_copy->currentPlayer == '1' ? '2' : '1'); /* changing the turn*/
 		for (int ci = 0; ci < SP_FIAR_GAME_N_COLUMNS; ci++) {
 			move_value next_move;
 			int top_row_ci = game_copy->tops[ci];
@@ -237,7 +247,7 @@ move_value minimaxAlgo(SPFiarGame* game_copy, unsigned int maxDepth) {
 				}
 			}
 		}
-		game_copy->currentPlayer == '1' ? game_copy->currentPlayer = '2' : game_copy->currentPlayer = '1'; /* changing the turn back */
+		game_copy->currentPlayer = (game_copy->currentPlayer == '1' ? '2' : '1'); /* changing the turn back */
 	}
 	return this_move;
 }
