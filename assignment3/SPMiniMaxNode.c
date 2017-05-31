@@ -235,3 +235,35 @@ move_value minimaxAlgo(SPFiarGame* game_copy, unsigned int maxDepth) {
 	}
 	return best_move;
 }
+
+void check_eval() {
+	SPFiarGame* game = spFiarGameCreate(10);
+	char symbol1 = SP_FIAR_GAME_PLAYER_1_SYMBOL;
+	char symbol2 = SP_FIAR_GAME_PLAYER_2_SYMBOL;
+	game->gameBoard[0][1] = symbol1;
+	game->gameBoard[1][1] = symbol1;
+	game->gameBoard[2][1] = symbol2;
+	game->gameBoard[3][1] = symbol1;
+	game->gameBoard[4][1] = symbol1;
+
+	game->gameBoard[0][2] = symbol1;
+	game->gameBoard[1][2] = symbol2;
+	game->gameBoard[2][2] = symbol2;
+
+	game->gameBoard[0][3] = symbol2;
+	game->gameBoard[1][3] = symbol2;
+	game->gameBoard[2][3] = symbol1;
+
+	game->gameBoard[0][4] = symbol1;
+
+	game->gameBoard[0][5] = symbol2;
+
+	game->gameBoard[0][6] = symbol2;
+
+
+	int evaluation = evaluate_board(game);
+	spFiarGamePrintBoard(game);
+	printf("value of the board: %d", evaluation);
+	spFiarGameDestroy(game);
+
+}
