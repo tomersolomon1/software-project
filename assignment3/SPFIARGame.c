@@ -428,3 +428,79 @@ char spFiarCheckWinner(SPFiarGame* src){
 
 	return '\0';
 }
+
+/* return 0 if no 4-in-a-row in the sequence that starts at (ri, ci), in (delta_r, delta_c) direction
+ * return 1 if there is 4 in-a-row - for player 1
+ * return 2 if there is 4 in-a-row - for player 2
+ */
+char sequence_of_four(SPFiarGame* game_copy, int ri, int ci, int delta_r, int delta_c) {
+	int sequence_len = 0; /* the length of the current sequence */
+	char empty_symbol = ' '; /* no player sequence */
+	char current_symbol = game_copy->gameBoard[ri][ci];
+	if (current_symbol != empty_symbol) {
+		sequence_len = 1;
+	}
+	while ((ri+delta_r >= 0) && (ri+delta_r < SP_FIAR_GAME_N_ROWS) && (ci+delta_c >= 0)
+			&& (ci+delta_c < SP_FIAR_GAME_N_COLUMNS) && (sequence_len < 4)) {
+		ri += delta_r;
+		ci += delta_c;
+		char next_symbol = game_copy->gameBoard[ri][ci];
+		if (next_symbol == current_symbol) {
+			if (current_symbol != empty_symbol) {
+				sequence_len += 1;
+			}
+		} else if (next_symbol != empty_symbol){
+			current_symbol = next_symbol;
+		} else { /* next-symbol is the empty symbol */
+			current_symbol = next_symbol;
+			int sequence_len = 0;
+		}
+	}
+	if (sequence_len == 4) {
+		return current_symbol; /* the player that has won */
+	} else {
+		return empty_symbol;
+	}
+}
+
+char spFiarCheckWinner2(SPFiarGame* src){
+	char winning_seq_symbol;
+	int somebody_won = 0;
+	for (int ri = 0; ri < SP_FIAR_GAME_N_ROWS; ri++) {
+		winning_seq_symbol = sequence_of_four(src, ri, 0, 0, 1); /* check the row */
+		if (winning_seq_symbol != ' ') {
+			return winning_seq_symbol;
+		}
+		winning_seq_symbol = sequence_of_four(src, ri, 0, 1, 1); /* check the diagonal - right-up*/
+		if (winning_seq_symbol != ' ') {
+			return winning_seq_symbol;
+		}
+		winning_seq_symbol = sequence_of_four(src, ri, 0, -1, 1); /* check the diagonal - right-down*/
+		if (winning_seq_symbol != ' ') {
+			return winning_seq_symbol;
+		}
+	}
+	for (int ri = 0; ri < SP_FIAR_GAME_N_ROWS; ri++) {
+		winning_seq_symbol = sequence_of_four(src, ri, SP_FIAR_GAME_N_COLUMNS-1, 1, 1); /* check the diagonal - left-up*/
+		if (winning_seq_symbol != ' ') {
+			return winning_seq_symbol;
+		}
+		winning_seq_symbol = sequence_of_four(src, ri, SP_FIAR_GAME_N_COLUMNS-1, -1, -1); /* check the diagonal - left-down*/
+		if (winning_seq_symbol != ' ') {
+			return winning_seq_symbol;
+		}
+	}
+	for (int ci = 0; ci < SP_FIAR_GAME_N_COLUMNS; ci++) {
+		winning_seq_symbol = sequence_of_four(src, 0, ci, 1, 0);
+		if (winning_seq_symbol != ' ') {
+			return winning_seq_symbol;
+		}
+	}
+	if (is_board_full(src)) { /* checking if the game is full - and therefore a tie  */
+		return SP_FIAR_GAME_TIE_SYMBOL;
+	}
+
+	return '\0';
+}
+
+
