@@ -34,6 +34,7 @@
 #include <string.h>
 #include "SPArrayList.h"
 #include "SPFIARGame.h"
+#include <stdio.h>
 
 
 /**
@@ -298,9 +299,10 @@ char sequence_of_four(SPFiarGame* game_copy, int ri, int ci, int delta_r, int de
 			}
 		} else if (next_symbol != empty_symbol){
 			current_symbol = next_symbol;
+			sequence_len = 1; /* we are starting a new sequence */
 		} else { /* next-symbol is the empty symbol */
 			current_symbol = next_symbol;
-			int sequence_len = 0;
+			sequence_len = 0;
 		}
 	}
 	if (sequence_len == 4) {
@@ -326,34 +328,39 @@ char sequence_of_four(SPFiarGame* game_copy, int ri, int ci, int delta_r, int de
 
 char spFiarCheckWinner(SPFiarGame* src){
 	char winning_seq_symbol;
-	int somebody_won = 0;
 	for (int ri = 0; ri < SP_FIAR_GAME_N_ROWS; ri++) {
 		winning_seq_symbol = sequence_of_four(src, ri, 0, 0, 1); /* check the row */
 		if (winning_seq_symbol != ' ') {
+			printf("found a winner! - ri: %d, ci: %d, delta_r: %d, delta_c: %d\n", ri, 0, 0, 1);
 			return winning_seq_symbol;
 		}
 		winning_seq_symbol = sequence_of_four(src, ri, 0, 1, 1); /* check the diagonal - right-up*/
 		if (winning_seq_symbol != ' ') {
+			printf("found a winner! - ri: %d, ci: %d, delta_r: %d, delta_c: %d\n", ri, 0, 1, 1);
 			return winning_seq_symbol;
 		}
 		winning_seq_symbol = sequence_of_four(src, ri, 0, -1, 1); /* check the diagonal - right-down*/
 		if (winning_seq_symbol != ' ') {
+			printf("found a winner! - ri: %d, ci: %d, delta_r: %d, delta_c: %d\n", ri, 0, -1, 1);
 			return winning_seq_symbol;
 		}
 	}
 	for (int ri = 0; ri < SP_FIAR_GAME_N_ROWS; ri++) {
 		winning_seq_symbol = sequence_of_four(src, ri, SP_FIAR_GAME_N_COLUMNS-1, 1, 1); /* check the diagonal - left-up*/
 		if (winning_seq_symbol != ' ') {
+			printf("found a winner! - ri: %d, ci: %d, delta_r: %d, delta_c: %d\n", ri, SP_FIAR_GAME_N_COLUMNS-1, 1, 1);
 			return winning_seq_symbol;
 		}
 		winning_seq_symbol = sequence_of_four(src, ri, SP_FIAR_GAME_N_COLUMNS-1, -1, -1); /* check the diagonal - left-down*/
 		if (winning_seq_symbol != ' ') {
+			printf("found a winner! - ri: %d, ci: %d, delta_r: %d, delta_c: %d\n", ri, SP_FIAR_GAME_N_COLUMNS-1, -1, -1);
 			return winning_seq_symbol;
 		}
 	}
 	for (int ci = 0; ci < SP_FIAR_GAME_N_COLUMNS; ci++) {
 		winning_seq_symbol = sequence_of_four(src, 0, ci, 1, 0);
 		if (winning_seq_symbol != ' ') {
+			printf("found a winner! - ri: %d, ci: %d, delta_r: %d, delta_c: %d\n", 0, ci, 1, 0);
 			return winning_seq_symbol;
 		}
 	}
