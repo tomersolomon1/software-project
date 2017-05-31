@@ -13,7 +13,7 @@ static bool spFiarGameValidMoveTest() {
 
 	}
 	ASSERT_FALSE(spFiarGameIsValidMove(res, 2));
-	ASSERT_TRUE(spFiarGameSetMove(res,2)==SP_FIAR_GAME_INVALID_MOVE);
+	ASSERT_TRUE(spFiarGameSetMove(res,2) == SP_FIAR_GAME_INVALID_MOVE);
 	spFiarGamePrintBoard(res);
 	spFiarGameDestroy(res);
 	return true;
@@ -44,12 +44,14 @@ static bool spFiarGameUndoMoveTest() {
 	while (repeat-- > 0) {
 		for (int i = 0; i < SP_FIAR_GAME_N_COLUMNS; i++) {
 			ASSERT_TRUE(spFiarGameSetMove(res, i) == SP_FIAR_GAME_SUCCESS);
+			spFiarGamePrintBoard(res);
 		}
 	}
 	repeat = 2;
 	while (repeat-- > 0) {
 		for (int i = 0; i < SP_FIAR_GAME_N_COLUMNS; i++) {
 			ASSERT_TRUE(spFiarGameUndoPrevMove(res) == SP_FIAR_GAME_SUCCESS);
+			spFiarGamePrintBoard(res);
 		}
 	}
 	spFiarGamePrintBoard(res);

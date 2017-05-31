@@ -1,9 +1,3 @@
-/*
- * SPFIARGame.c
- *
- *  Created on: May 25, 2017
- *      Author: sapir
- */
 
 /**
  * SPFIARGame Summary:
@@ -33,7 +27,6 @@
 #define Player1 '1'
 #define Player2 '2'
 
-
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -42,29 +35,6 @@
 #include "SPArrayList.h"
 #include "SPFIARGame.h"
 
-
-
-typedef struct sp_fiar_game_t {
-	char gameBoard[SP_FIAR_GAME_N_ROWS][SP_FIAR_GAME_N_COLUMNS];
-	int tops[SP_FIAR_GAME_N_COLUMNS];
-	char currentPlayer;
-	SPArrayList* histoy;
-	//You May add any fields you like
-} SPFiarGame;
-
-bool spFiarGameIsValidMove(SPFiarGame* src, int col);
-void spFiarGameUndoPrevMove2(SPFiarGame* src);
-
-/**
- * Type used for returning error codes from game functions
- */
-typedef enum sp_fiar_game_message_t {
-	SP_FIAR_GAME_INVALID_MOVE,
-	SP_FIAR_GAME_INVALID_ARGUMENT,
-	SP_FIAR_GAME_NO_HISTORY,
-	SP_FIAR_GAME_SUCCESS,
-//You may add any message you like
-} SP_FIAR_GAME_MESSAGE;
 
 /**
  * Creates a new game with a specified history size. The history size is a
@@ -92,8 +62,8 @@ SPFiarGame* spFiarGameCreate(int historySize){
 			newGame->gameBoard[i][j] = SP_FIAR_GAME_EMPTY_ENTRY;
 		}
 	}
-	SPArrayList* history = spArrayListCreate(historySize * 2);
-	newGame->histoy = history;
+	SPArrayList* history1 = spArrayListCreate(historySize);
+	newGame->history = history1;
 	return newGame;
 }
 
@@ -111,7 +81,7 @@ SPFiarGame* spFiarGameCopy(SPFiarGame* src){
 	if(src == NULL){
 		return NULL;
 	}
-	int history_size = spArrayListMaxCapacity(src->histoy)/2;
+	int history_size = spArrayListMaxCapacity(src->history);
 	SPFiarGame* dst = spFiarGameCreate(history_size);
 	if(dst == NULL){
 		return NULL;
@@ -125,11 +95,11 @@ SPFiarGame* spFiarGameCopy(SPFiarGame* src){
 			dst->gameBoard[i][j] = (src->gameBoard)[i][j];
 		}
 	}
-	SPArrayList* history  = spArrayListCopy(src->histoy);
+	SPArrayList* history  = spArrayListCopy(src->history);
 	if(history == NULL){
 		return NULL;
 	}
-	dst->histoy = history;
+	dst->history = history;
 	return dst;
 }
 
@@ -141,7 +111,7 @@ SPFiarGame* spFiarGameCopy(SPFiarGame* src){
  */
 void spFiarGameDestroy(SPFiarGame* src){
 	if(src != NULL){
-		spArrayListDestroy(src->histoy);
+		spArrayListDestroy(src->history);
 		free(src);
 	}
 }
@@ -176,7 +146,7 @@ SP_FIAR_GAME_MESSAGE spFiarGameSetMove(SPFiarGame* src, int col){
 		src->currentPlayer = Player1;
 	}
 	(src->tops)[col]++;
-	spArrayListPushFirst((src->histoy), col);
+	spArrayListPushFirst((src->history), col);
 	return SP_FIAR_GAME_SUCCESS;
 }
 
@@ -217,13 +187,13 @@ SP_FIAR_GAME_MESSAGE spFiarGameUndoPrevMove(SPFiarGame* src){
 	if(src == NULL){
 		return SP_FIAR_GAME_INVALID_ARGUMENT;
 	}
-	if(spArrayListSize(src->histoy) == 0){
+	if(spArrayListSize(src->history) == 0){
 		return SP_FIAR_GAME_NO_HISTORY;
 	}
 	spFiarGameUndoPrevMove2(src);
-	if(spArrayListSize(src->histoy) > 0){
-		spFiarGameUndoPrevMove2(src);
-	}
+	//if(spArrayListSize(src->history) > 0){
+	//	spFiarGameUndoPrevMove2(src);
+	//}
 	return SP_FIAR_GAME_SUCCESS;
 }
 /**
@@ -232,7 +202,7 @@ SP_FIAR_GAME_MESSAGE spFiarGameUndoPrevMove(SPFiarGame* src){
  * assuming everything is valid
  * */
 void spFiarGameUndoPrevMove2(SPFiarGame* src){
-	int col_last_move = spArrayListGetFirst(src->histoy);
+	int col_last_move = spArrayListGetFirst(src->history);
 	int row_last_move = src->tops[col_last_move] - 1;
 	src->gameBoard[row_last_move][col_last_move] = SP_FIAR_GAME_EMPTY_ENTRY;
 	src->tops[col_last_move] --;
@@ -242,7 +212,7 @@ void spFiarGameUndoPrevMove2(SPFiarGame* src){
 	else if(src->currentPlayer == Player2){
 		src->currentPlayer = Player1;
 	}
-	spArrayListRemoveFirst(src->histoy);
+	spArrayListRemoveFirst(src->history);
 }
 
 /**
@@ -438,24 +408,30 @@ int diagonal_winning(SPFiarGame* src) {
 */
 
 char spFiarCheckWinner(SPFiarGame* src){
-	char winner; /* default value: null char */
 	int diagonal_winner = diagonal_winning(src);
 	if (diagonal_winner != 0) {
-		diagonal_winner == 1 ? winner = SP_FIAR_GAME_PLAYER_1_SYMBOL : winner = SP_FIAR_GAME_PLAYER_2_SYMBOL;
-		return winner;
+
+		if (diagonal_winner == 1)
+			return SP_FIAR_GAME_PLAYER_1_SYMBOL;
+		else
+			return SP_FIAR_GAME_PLAYER_2_SYMBOL;
 	}
 	for (int ri = 0; ri < SP_FIAR_GAME_N_ROWS; ri++) {
 		int row_winner = four_in_a_row(src, ri);
 		if (row_winner != 0) {
-			row_winner == 1 ? winner = SP_FIAR_GAME_PLAYER_1_SYMBOL : winner = SP_FIAR_GAME_PLAYER_2_SYMBOL;
-			return winner;
+			if (row_winner == 1)
+				return SP_FIAR_GAME_PLAYER_1_SYMBOL;
+			else
+				return SP_FIAR_GAME_PLAYER_2_SYMBOL;
 		}
 	}
 	for (int ci = 0; ci < SP_FIAR_GAME_N_COLUMNS; ci++) {
 		int column_winner = four_in_a_column(src, ci);
 		if (column_winner != 0) {
-			column_winner == 1 ? winner = SP_FIAR_GAME_PLAYER_1_SYMBOL : winner = SP_FIAR_GAME_PLAYER_2_SYMBOL;
-			return winner;
+			if (column_winner == 1)
+				return SP_FIAR_GAME_PLAYER_1_SYMBOL;
+			else
+				return SP_FIAR_GAME_PLAYER_2_SYMBOL;
 		}
 	}
 
@@ -463,6 +439,5 @@ char spFiarCheckWinner(SPFiarGame* src){
 		return SP_FIAR_GAME_TIE_SYMBOL;
 	}
 
-	return NULL_CHAR; /* */
+	return '\0';
 }
-

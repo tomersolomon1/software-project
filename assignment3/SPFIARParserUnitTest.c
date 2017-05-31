@@ -1,5 +1,6 @@
 #include "unit_test_util.h"
 #include "SPFIARParser.h"
+#include <stddef.h>
 
 static bool spParserCheckIsInt() {
 	ASSERT_TRUE(spParserIsInt("1"));
@@ -28,8 +29,8 @@ static bool spParserCheckParseLine() {
 	ASSERT_TRUE(cmd.cmd == SP_INVALID_LINE && !cmd.validArg);
 	return true;
 }
-int main() {
-	RUN_TEST(spParserCheckIsInt());
-	RUN_TEST(spParserCheckParseLine());
+int main3() {
+	RUN_TEST(spParserCheckIsInt);
+	RUN_TEST(spParserCheckParseLine);
 	return 0;
 }

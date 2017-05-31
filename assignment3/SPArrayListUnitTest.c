@@ -66,7 +66,7 @@ static bool spArrayListCreateTest() {
 	return true;
 }
 
-int main() {
+int main1() {
 	RUN_TEST(spArrayListCreateTest);
 	RUN_TEST(spArrayListBasicAddTest);
 	RUN_TEST(spArrayListBasicRemoveTest);
