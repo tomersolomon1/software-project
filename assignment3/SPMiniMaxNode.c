@@ -236,7 +236,7 @@ move_value minimaxAlgo(SPFiarGame* game_copy, unsigned int maxDepth) {
 	return best_move;
 }
 
-void check_eval() {
+void check_eval1() {
 	SPFiarGame* game = spFiarGameCreate(10);
 	char symbol1 = SP_FIAR_GAME_PLAYER_1_SYMBOL;
 	char symbol2 = SP_FIAR_GAME_PLAYER_2_SYMBOL;
@@ -266,4 +266,48 @@ void check_eval() {
 	printf("value of the board: %d", evaluation);
 	spFiarGameDestroy(game);
 
+}
+
+void check_eval2() {  /* should be victory for player 1 */
+	SPFiarGame* game = spFiarGameCreate(10);
+	char symbol1 = SP_FIAR_GAME_PLAYER_1_SYMBOL;
+	char symbol2 = SP_FIAR_GAME_PLAYER_2_SYMBOL;
+
+	game->gameBoard[0][2] = symbol1;
+	game->gameBoard[1][2] = symbol1;
+	game->gameBoard[2][2] = symbol1;
+
+	game->gameBoard[0][3] = symbol2;
+	game->gameBoard[1][3] = symbol2;
+	game->gameBoard[2][3] = symbol2;
+
+	game->gameBoard[0][4] = symbol1;
+	game->gameBoard[1][4] = symbol1;
+	game->gameBoard[2][4] = symbol1;
+
+	int evaluation = evaluate_board(game);
+	spFiarGamePrintBoard(game);
+	printf("value of the board: %d", evaluation);
+	spFiarGameDestroy(game);
+}
+
+void check_eval3() {  /* should be victory for player 1 */
+	SPFiarGame* game = spFiarGameCreate(10);
+	char symbol1 = SP_FIAR_GAME_PLAYER_1_SYMBOL;
+	//char symbol2 = SP_FIAR_GAME_PLAYER_2_SYMBOL;
+
+	game->gameBoard[0][6] = symbol1;
+	game->gameBoard[1][6] = symbol1;
+	game->gameBoard[2][6] = symbol1;
+
+
+	int evaluation = evaluate_board(game);
+	spFiarGamePrintBoard(game);
+	printf("value of the board: %d", evaluation);
+	spFiarGameDestroy(game);
+}
+
+void check_eval() {
+	//check_eval1();
+	check_eval3();
 }
