@@ -49,9 +49,6 @@ int span_diagonal_upleft(SPFiarGame* currentGame, int ri, int cj, int sequences_
  */
 int evaluate_board(SPFiarGame* currentGame);
 
-/* we can assume the game is not over - there is at least one legal move, and the nobody has won yet */
-int spMinimaxSuggestMove(SPFiarGame* currentGame, unsigned int maxDepth);
-
 void update_best_move(move_value* best_move_so_far, int value, int move, char current_player);
 
 /* checks if the game is over, and updates this
@@ -68,13 +65,5 @@ char get_symbol(char current_player);
  * the object of player 1 is to maximize the value-function, and the object of player 2 is to minimize the value-function
  * by default, |this_move.value| < INT_MAX, since value = INT_MAX is means the winning of player 1 (similarly, INT_MIN means the winning of player 2) */
 move_value minimaxAlgo(SPFiarGame* game_copy, unsigned int maxDepth);
-
-void check_eval1();
-
-void check_eval2();
-
-void check_eval3();
-
-void check_eval();
 
 #endif

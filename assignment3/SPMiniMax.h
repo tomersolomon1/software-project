@@ -16,6 +16,9 @@
  * On success the function returns a number between [0,SP_FIAR_GAME_N_COLUMNS -1]
  * which is the best move for the current player.
  */
+
+/* we can assume the game is not over - there is at least one legal move, and nobody has won yet */
+
 int spMinimaxSuggestMove(SPFiarGame* currentGame,
 		unsigned int maxDepth);
 

@@ -137,35 +137,6 @@ int evaluate_board(SPFiarGame* currentGame) {
 	return inner_product(sequences_counter, weights); /* if we got here it means no one has won so far */
 }
 
-/* we can assume the game is not over - there is at least one legal move, and the nobody has won yet */
-int spMinimaxSuggestMove(SPFiarGame* currentGame, unsigned int maxDepth) {
-	// printf("suggest-move!\n"); /* for debugging */
-	// fflush(stdout);
-	SPFiarGame* game_copy = spFiarGameCopy(currentGame);
-	// printf("copied board!\n"); /* for debugging */
-	// fflush(stdout);
-	if (game_copy != NULL) {
-		move_value best_move;
-		// printf("board before suggest move:\n");
-		// fflush(stdout);
-		spFiarGamePrintBoard(game_copy);
-
-		best_move = minimaxAlgo(game_copy, maxDepth);
-		// printf("suggest-move - suggested move: %d, suggested-move-value: %d\n", best_move.move, best_move.value);
-		// fflush(stdout);
-		spFiarGameDestroy(game_copy);
-		if (best_move.move != -1) {
-			return best_move.move;
-		} else {
-			/* no legal move - should ask the forum  */
-			/* according to the return value we'll be able to who won / there was a tie */
-			return -1;
-		}
-	} else { /* memory problem */
-		return -2;
-	}
-}
-
 /* if best_move_so_far->move == -1 updated anyway */
 void update_best_move(move_value* best_move_so_far, int value, int move, char current_player) {
 	// printf("update move - checking in, current-player: %c, best-so-far-move_value: %d\n", current_player, best_move_so_far->value );

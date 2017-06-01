@@ -6,13 +6,28 @@
  */
 
 #include "SPMiniMax.h"
+#include "SPFIARGame.h"
+#include <limits.h>
+#include <stddef.h>
 
-int spMinimaxSuggestMove2(SPFiarGame* currentGame,
-		unsigned int maxDepth){
-	for(int i=0; i < SP_FIAR_GAME_N_COLUMNS; i++){
-		if(spFiarGameIsValidMove(currentGame, i)){
-			return i;
+
+/* we can assume the game is not over - there is at least one legal move, and the nobody has won yet */
+int spMinimaxSuggestMove(SPFiarGame* currentGame, unsigned int maxDepth) {
+	SPFiarGame* game_copy = spFiarGameCopy(currentGame);
+	if (game_copy != NULL) {
+		move_value best_move;
+		spFiarGamePrintBoard(game_copy);
+		best_move = minimaxAlgo(game_copy, maxDepth);
+		spFiarGameDestroy(game_copy);
+		if (best_move.move != -1) {
+			return best_move.move;
+		} else {
+			/* no legal move - some problem occurred  */
+			/* according to the return value we'll be able to who won / there was a tie */
+			return -1;
 		}
+	} else { /* memory problem */
+		return -2;
 	}
-	return 0;
 }
+
