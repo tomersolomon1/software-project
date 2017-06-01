@@ -7,6 +7,7 @@
 
 #include "SPMiniMax.h"
 #include "SPFIARGame.h"
+#include "SPMiniMaxNode.h"
 #include <limits.h>
 #include <stddef.h>
 

@@ -6,12 +6,7 @@
 #include "SPFIARGame.h"
 #include <limits.h>
 #include <stddef.h>
-
-
-typedef struct move_value_t {
-	int move; /* the column */
-	int value; /* the value of the move, according to the mini-max algo */
-} move_value;
+#include "SPMiniMaxNode.h"
 
 move_value minimaxAlgo(SPFiarGame* game_copy, unsigned int maxDepth);
 
