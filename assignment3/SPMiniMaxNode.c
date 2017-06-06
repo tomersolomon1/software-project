@@ -175,19 +175,11 @@ char get_symbol(char current_player) {
  * the object of player 1 is to maximize the value-function, and the object of player 2 is to minimize the value-function
  * by default, |this_move.value| < INT_MAX, since value = INT_MAX is means the winning of player 1 (similarly, INT_MIN means the winning of player 2) */
 move_value minimaxAlgo(SPFiarGame* game_copy, unsigned int maxDepth) {
-	// printf("mini-max algo!, max-depth: %d\n", maxDepth);
-	// fflush(stdout);
-	// spFiarGamePrintBoard(game_copy);
-	// fflush(stdout);
 	char current_symbol =  get_symbol(game_copy->currentPlayer); /* the symbol of the current player */
 	move_value best_move; /* will contain the best move for the player and it's value */
 	best_move.move = -1; /* default value */
 	best_move.value = (game_copy->currentPlayer == '1' ? (INT_MIN + 1) : (INT_MAX - 1)); /* default value for the mini-max algo */
-	// printf("checking if the game is over\n");
-	fflush(stdout);
 	if (is_the_game_over(game_copy, &best_move)) { /* checking if the game is over, and if so - this_move.move will be -1 */
-		// printf("the game is over indid\n");
-		// fflush(stdout);
 		return best_move;
 	}
 
@@ -227,8 +219,6 @@ move_value minimaxAlgo(SPFiarGame* game_copy, unsigned int maxDepth) {
 		}
 
 	}
-	// printf("mini-max algo - good-bye, max-depth: %d, best-move: %d, best-move-value: %d\n", maxDepth, best_move.move, best_move.value);
-	fflush(stdout);
 	return best_move;
 }
 
@@ -303,7 +293,244 @@ void check_eval3() {  /* should be victory for player 1 */
 	spFiarGameDestroy(game);
 }
 
+void check_eval_with_uri1() {
+	SPFiarGame* game = spFiarGameCreate(10);
+	char symbol1 = SP_FIAR_GAME_PLAYER_1_SYMBOL;
+	char symbol2 = SP_FIAR_GAME_PLAYER_2_SYMBOL;
+
+	/* first row */
+	game->gameBoard[0][0] = symbol1;
+	game->gameBoard[0][1] = symbol1;
+	game->gameBoard[0][2] = symbol1;
+	game->gameBoard[0][3] = symbol2;
+	game->gameBoard[0][4] = symbol2;
+	game->gameBoard[0][6] = symbol2;
+
+	/* second row */
+	game->gameBoard[1][1] = symbol2;
+	game->gameBoard[1][2] = symbol2;
+	game->gameBoard[1][3] = symbol1;
+	game->gameBoard[1][4] = symbol1;
+
+	/* thrid row */
+	game->gameBoard[2][2] = symbol2;
+	game->gameBoard[2][3] = symbol2;
+	game->gameBoard[2][4] = symbol1;
+
+	/* forth row */
+	game->gameBoard[3][2] = symbol1;
+	game->gameBoard[3][3] = symbol1;
+	game->gameBoard[3][4] = symbol2;
+
+	int evaluation = evaluate_board(game);
+	spFiarGamePrintBoard(game);
+	printf("value of the board: %d\n", evaluation);
+	fflush(stdout);
+	spFiarGameDestroy(game);
+}
+
+void check_eval_with_uri2() {
+	SPFiarGame* game = spFiarGameCreate(10);
+	char symbol1 = SP_FIAR_GAME_PLAYER_1_SYMBOL;
+	char symbol2 = SP_FIAR_GAME_PLAYER_2_SYMBOL;
+
+	/* first row */
+	game->gameBoard[0][0] = symbol1;
+	game->gameBoard[0][1] = symbol2;
+	game->gameBoard[0][2] = symbol2;
+	game->gameBoard[0][3] = symbol1;
+	game->gameBoard[0][4] = symbol2;
+	game->gameBoard[0][5] = symbol2;
+	game->gameBoard[0][6] = symbol2;
+
+	/* second row */
+	game->gameBoard[1][0] = symbol2;
+	game->gameBoard[1][1] = symbol1;
+	game->gameBoard[1][2] = symbol2;
+	game->gameBoard[1][3] = symbol1;
+	game->gameBoard[1][4] = symbol1;
+	game->gameBoard[1][5] = symbol2;
+
+	/* thrid row */
+	game->gameBoard[2][0] = symbol1;
+	game->gameBoard[2][1] = symbol1;
+	game->gameBoard[2][2] = symbol2;
+	game->gameBoard[2][3] = symbol1;
+	game->gameBoard[2][4] = symbol1;
+
+	/* forth row */
+	game->gameBoard[3][0] = symbol2;
+	game->gameBoard[3][1] = symbol2;
+	game->gameBoard[3][2] = symbol1;
+	game->gameBoard[3][3] = symbol2;
+
+	/* fifth row */
+	game->gameBoard[4][0] = symbol1;
+	game->gameBoard[4][1] = symbol2;
+	game->gameBoard[4][2] = symbol2;
+
+	/* sixth row */
+	game->gameBoard[5][0] = symbol2;
+	game->gameBoard[5][1] = symbol2;
+
+	int evaluation = evaluate_board(game);
+	spFiarGamePrintBoard(game);
+	printf("value of the board: %d\n", evaluation);
+	fflush(stdout);
+	spFiarGameDestroy(game);
+}
+
+void check_eval_with_uri3() {
+	SPFiarGame* game = spFiarGameCreate(10);
+	char symbol1 = SP_FIAR_GAME_PLAYER_1_SYMBOL;
+	char symbol2 = SP_FIAR_GAME_PLAYER_2_SYMBOL;
+
+	/* first row */
+	game->gameBoard[0][0] = symbol2;
+	game->gameBoard[0][1] = symbol2;
+	game->gameBoard[0][2] = symbol2;
+	game->gameBoard[0][3] = symbol1;
+	game->gameBoard[0][4] = symbol2;
+	game->gameBoard[0][5] = symbol1;
+	game->gameBoard[0][6] = symbol1;
+
+	/* second row */
+	game->gameBoard[1][0] = symbol2;
+	game->gameBoard[1][1] = symbol2;
+	game->gameBoard[1][2] = symbol2;
+	game->gameBoard[1][3] = symbol1;
+	game->gameBoard[1][4] = symbol2;
+	game->gameBoard[1][5] = symbol1;
+	game->gameBoard[1][6] = symbol2;
+
+	/* thrid row */
+	game->gameBoard[2][2] = symbol1;
+	game->gameBoard[2][3] = symbol2;
+	game->gameBoard[2][4] = symbol1;
+
+	/* forth row */
+	game->gameBoard[3][2] = symbol1;
+	game->gameBoard[3][3] = symbol2;
+
+
+	int evaluation = evaluate_board(game);
+	spFiarGamePrintBoard(game);
+	printf("value of the board: %d\n", evaluation);
+	fflush(stdout);
+	spFiarGameDestroy(game);
+}
+
+void check_eval_with_uri4() {
+	SPFiarGame* game = spFiarGameCreate(10);
+	char symbol1 = SP_FIAR_GAME_PLAYER_1_SYMBOL;
+	char symbol2 = SP_FIAR_GAME_PLAYER_2_SYMBOL;
+
+	/* first row */
+	game->gameBoard[0][0] = symbol2;
+
+	game->gameBoard[0][6] = symbol1;
+
+	/* second row */
+	game->gameBoard[1][0] = symbol2;
+	game->gameBoard[1][1] = symbol2;
+	game->gameBoard[1][4] = symbol2;
+	game->gameBoard[1][6] = symbol2;
+
+	/* thrid row */
+	game->gameBoard[2][2] = symbol1;
+	game->gameBoard[2][3] = symbol2;
+	game->gameBoard[2][4] = symbol1;
+
+	/* forth row */
+	game->gameBoard[3][2] = symbol1;
+	game->gameBoard[3][3] = symbol2;
+
+	/* corners */
+	game->gameBoard[5][0] = symbol1;
+	game->gameBoard[5][6] = symbol1;
+
+
+
+	int evaluation = evaluate_board(game);
+	spFiarGamePrintBoard(game);
+	printf("value of the board: %d\n", evaluation);
+	fflush(stdout);
+	spFiarGameDestroy(game);
+}
+
+void check_eval_with_uri5() {
+	SPFiarGame* game = spFiarGameCreate(10);
+	char symbol1 = SP_FIAR_GAME_PLAYER_1_SYMBOL;
+	char symbol2 = SP_FIAR_GAME_PLAYER_2_SYMBOL;
+
+	/* second row */
+	game->gameBoard[1][1] = symbol2;
+	game->gameBoard[1][4] = symbol1;
+	game->gameBoard[1][6] = symbol2;
+
+	/* forth row */
+	game->gameBoard[3][2] = symbol1;
+
+	/* corners */
+	game->gameBoard[5][0] = symbol1;
+	game->gameBoard[5][6] = symbol1;
+
+
+
+	int evaluation = evaluate_board(game);
+	spFiarGamePrintBoard(game);
+	printf("value of the board: %d\n", evaluation);
+	fflush(stdout);
+	spFiarGameDestroy(game);
+}
+
+void check_eval_with_uri6() {
+	SPFiarGame* game = spFiarGameCreate(10);
+	char symbol1 = SP_FIAR_GAME_PLAYER_1_SYMBOL;
+	//char symbol2 = SP_FIAR_GAME_PLAYER_2_SYMBOL;
+
+	/* corners */
+	game->gameBoard[5][0] = symbol1;
+	game->gameBoard[5][6] = symbol1;
+
+
+
+	int evaluation = evaluate_board(game);
+	spFiarGamePrintBoard(game);
+	printf("value of the board: %d\n", evaluation);
+	fflush(stdout);
+	spFiarGameDestroy(game);
+}
+
 void check_eval() {
-	//check_eval1();
+	check_eval1();
+	printf("\n");
+	fflush(stdout);
 	check_eval3();
+	printf("\n");
+	fflush(stdout);
+
+	check_eval_with_uri1();
+	printf("\n");
+	fflush(stdout);
+
+	check_eval_with_uri2();
+	printf("\n");
+	fflush(stdout);
+
+	check_eval_with_uri3();
+	printf("\n");
+	fflush(stdout);
+
+	check_eval_with_uri4();
+	printf("\n");
+	fflush(stdout);
+
+	check_eval_with_uri5();
+	printf("\n");
+	fflush(stdout);
+
+	check_eval_with_uri6();
+
+	fflush(stdout);
 }

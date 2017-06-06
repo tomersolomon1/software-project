@@ -9,10 +9,11 @@
 #define HISTORY_SIZE 10
 
 void check_eval();
-int main100() {
+int main_checking_evalF() {
 	check_eval();
-	return 1;
+	return 0;
 }
+
 int main(){
 	while(1){
 		unsigned int difficulty_level = get_difficulty_level();
@@ -34,7 +35,6 @@ int main(){
 			print_game_status(game);
 			cmd = get_cmd();
 			while(!is_command_ok(cmd, game)){
-				print_game_status(game);
 				cmd = get_cmd();
 			}
 			if(!make_command(cmd, game, difficulty_level)){

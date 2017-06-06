@@ -17,7 +17,6 @@ int spMinimaxSuggestMove(SPFiarGame* currentGame, unsigned int maxDepth) {
 	SPFiarGame* game_copy = spFiarGameCopy(currentGame);
 	if (game_copy != NULL) {
 		move_value best_move;
-		spFiarGamePrintBoard(game_copy);
 		best_move = minimaxAlgo(game_copy, maxDepth);
 		spFiarGameDestroy(game_copy);
 		if (best_move.move != -1) {
