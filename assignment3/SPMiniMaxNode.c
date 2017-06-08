@@ -160,7 +160,7 @@ int is_the_game_over(SPFiarGame* game_copy, move_value* this_move) {
 		this_move->value = INT_MIN;
 		return 1;
 	} else if (game_status == SP_FIAR_GAME_TIE_SYMBOL) { /* it's a tie */
-		this_move = 0;
+		this_move->value = 0;
 		return 1;
 	}
 	return 0; /* otherwise, no one has won and it's not a tie */
@@ -180,10 +180,13 @@ move_value minimaxAlgo(SPFiarGame* game_copy, unsigned int maxDepth) {
 	best_move.move = -1; /* default value */
 	best_move.value = (game_copy->currentPlayer == '1' ? (INT_MIN + 1) : (INT_MAX - 1)); /* default value for the mini-max algo */
 	if (is_the_game_over(game_copy, &best_move)) { /* checking if the game is over, and if so - this_move.move will be -1 */
+		printf("game is over!\n");
+		fflush(stdout);
+		spFiarGamePrintBoard(game_copy);
 		return best_move;
 	}
 
-	if (maxDepth == 1) { /* halting condition */
+	else if (maxDepth == 1) { /* halting condition */
 		for (int ci = 0; ci < SP_FIAR_GAME_N_COLUMNS; ci++) {
 			int top_row_ci = game_copy->tops[ci]; /* the first available row in this column  */
 			if (top_row_ci < SP_FIAR_GAME_N_ROWS) { /* column isn't full */
@@ -196,7 +199,6 @@ move_value minimaxAlgo(SPFiarGame* game_copy, unsigned int maxDepth) {
 			}
 		}
 	} else { /* maxDepth > 1, need for recursion calls */
-
 		for (int move_ci = 0; move_ci < SP_FIAR_GAME_N_COLUMNS; move_ci++) {
 			move_value next_move;
 			int top_row_ci = game_copy->tops[move_ci];
@@ -212,12 +214,12 @@ move_value minimaxAlgo(SPFiarGame* game_copy, unsigned int maxDepth) {
 				update_best_move(&best_move, next_move.value, move_ci, game_copy->currentPlayer);
 				game_copy->tops[move_ci] = game_copy->tops[move_ci] - 1; /* decreasing tops[ci] */
 				game_copy->gameBoard[top_row_ci][move_ci] = ' '; /* restoring game_copy->gameBoard[top_ci][i] to be empty again */
-				if ((next_move.move == -1) && (next_move.value == INT_MIN || next_move.value == INT_MAX)) { /* this was probably a winning move! */
-					break; /* no need for further evaluations, found the best move - somebody has just won the game! */
+				if (next_move.value == INT_MIN || next_move.value == INT_MAX) { /* this was probably a winning move! */
+					//printf("found a winner!");
+					break; /* no need for further evaluations, found the best move - somebody probably just won the game! */
 				}
 			}
 		}
-
 	}
 	return best_move;
 }
@@ -502,7 +504,110 @@ void check_eval_with_uri6() {
 	spFiarGameDestroy(game);
 }
 
-void check_eval() {
+void losing_boards() {
+	move_value fake_move = {0, 0};
+	SPFiarGame* game = spFiarGameCreate(10);
+	char symbol1 = SP_FIAR_GAME_PLAYER_1_SYMBOL;
+	char symbol2 = SP_FIAR_GAME_PLAYER_2_SYMBOL;
+	char game_status;
+	/* winning in a row */
+	game->gameBoard[5][0] = symbol1;
+	game->gameBoard[5][1] = symbol1;
+	game->gameBoard[5][2] = symbol1;
+	game->gameBoard[5][3] = symbol1;
+
+	int evaluation = evaluate_board(game);
+
+	game_status = spFiarCheckWinner(game);
+	is_the_game_over(game, &fake_move);
+	printf("winner: %c, value of the board: %d, fake-move.value: %d\n", game_status, evaluation, fake_move.value);
+	fake_move.value = 0;
+
+	fflush(stdout);
+	spFiarGameDestroy(game);
+
+	/* winning in a column */
+	game = spFiarGameCreate(10);
+	game->gameBoard[1][0] = symbol1;
+	game->gameBoard[2][0] = symbol1;
+	game->gameBoard[3][0] = symbol1;
+	game->gameBoard[4][0] = symbol1;
+
+	evaluation = evaluate_board(game);
+	spFiarGamePrintBoard(game);
+	game_status = spFiarCheckWinner(game);
+	is_the_game_over(game, &fake_move);
+	printf("winner: %c, value of the board: %d, fake-move.value: %d\n", game_status, evaluation, fake_move.value);
+	fake_move.value = 0;
+	fflush(stdout);
+	spFiarGameDestroy(game);
+
+	/* winning in a diagonal 1 */
+	game = spFiarGameCreate(10);
+	game->gameBoard[5][0] = symbol1;
+	game->gameBoard[4][1] = symbol1;
+	game->gameBoard[3][2] = symbol1;
+	game->gameBoard[2][3] = symbol1;
+
+	evaluation = evaluate_board(game);
+	spFiarGamePrintBoard(game);
+	game_status = spFiarCheckWinner(game);
+	is_the_game_over(game, &fake_move);
+	printf("winner: %c, value of the board: %d, fake-move.value: %d\n", game_status, evaluation, fake_move.value);
+	fake_move.value = 0;
+	fflush(stdout);
+	spFiarGameDestroy(game);
+
+	/* winning in a diagonal 2 */
+	game = spFiarGameCreate(10);
+	game->gameBoard[3][0] = symbol1;
+	game->gameBoard[2][1] = symbol1;
+	game->gameBoard[1][2] = symbol1;
+	game->gameBoard[0][3] = symbol1;
+
+	evaluation = evaluate_board(game);
+	spFiarGamePrintBoard(game);
+	game_status = spFiarCheckWinner(game);
+	is_the_game_over(game, &fake_move);
+	printf("winner: %c, value of the board: %d, fake-move.value: %d\n", game_status, evaluation, fake_move.value);
+	fake_move.value = 0;
+	fflush(stdout);
+	spFiarGameDestroy(game);
+
+	/* winning in a diagonal 3 */
+	game = spFiarGameCreate(10);
+	game->gameBoard[3][2] = symbol2;
+	game->gameBoard[2][3] = symbol2;
+	game->gameBoard[1][4] = symbol2;
+	game->gameBoard[0][5] = symbol2;
+
+	evaluation = evaluate_board(game);
+	spFiarGamePrintBoard(game);
+	game_status = spFiarCheckWinner(game);
+	is_the_game_over(game, &fake_move);
+	printf("winner: %c, value of the board: %d, fake-move.value: %d\n", game_status, evaluation, fake_move.value);
+	fake_move.value = 0;
+	fflush(stdout);
+
+	/* not a winnig board */
+
+	game = spFiarGameCreate(10);
+	game->gameBoard[3][2] = symbol2;
+	game->gameBoard[2][3] = symbol2;
+	game->gameBoard[1][4] = symbol2;
+	evaluation = evaluate_board(game);
+	spFiarGamePrintBoard(game);
+	game_status = spFiarCheckWinner(game);
+	is_the_game_over(game, &fake_move);
+	printf("winner: %c, value of the board: %d, fake-move.value: %d\n", game_status, evaluation, fake_move.value);
+	fake_move.value = 0;
+	spFiarGameDestroy(game);
+	fflush(stdout);
+
+
+}
+
+void check_scores() {
 	check_eval1();
 	printf("\n");
 	fflush(stdout);
@@ -532,5 +637,9 @@ void check_eval() {
 
 	check_eval_with_uri6();
 
+}
+
+void check_eval() {
+	losing_boards();
 	fflush(stdout);
 }
