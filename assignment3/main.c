@@ -14,7 +14,7 @@ int main1001() {
 	return 0;
 }
 
-int main(){
+int main2(){
 	while(1){
 		unsigned int difficulty_level = get_difficulty_level();
 		while (difficulty_level  == 0){

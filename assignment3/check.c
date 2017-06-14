@@ -24,6 +24,9 @@ int main(){
 		//computer move
 		printf("computer move:\n");
 		fflush(stdout);
+		if (i == n-1) {
+			difficulty_level = 6;
+		}
 		col_for_comp_move = spMinimaxSuggestMove(game, difficulty_level);
 		spFiarGameSetMove(game, col_for_comp_move);
 		spFiarGamePrintBoard(game);
