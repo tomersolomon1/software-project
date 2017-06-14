@@ -17,8 +17,10 @@
 SPArrayList* spArrayListCreate(int maxSize)
 {
 	SPArrayList* array = (SPArrayList*) malloc(sizeof(SPArrayList));
+
 	array->maxSize = maxSize;
 	array->elements = (int*) malloc(sizeof(int) * maxSize);
+
 	array->actualSize = 0;
 	return array;
 }
@@ -35,9 +37,11 @@ SPArrayList* spArrayListCopy(SPArrayList* src)
 {
 	if(src == NULL){ return NULL; }
 	SPArrayList* dst = (SPArrayList*) malloc(sizeof(SPArrayList));
+
 	dst->actualSize = src->actualSize;
 	dst->maxSize = src->maxSize;
 	int *dst_elements = (int*) malloc(sizeof(int) * src->maxSize);
+
 	if(dst_elements == NULL){ return NULL;}
 	memcpy(dst_elements, src->elements, (sizeof(int) * src->maxSize));
 	dst->elements = dst_elements;

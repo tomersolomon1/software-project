@@ -80,6 +80,7 @@ SPFiarGame* spFiarGameCopy(SPFiarGame* src){
 	if(history == NULL){
 		return NULL;
 	}
+	spArrayListDestroy(dst->history);
 	dst->history = history;
 	return dst;
 }
