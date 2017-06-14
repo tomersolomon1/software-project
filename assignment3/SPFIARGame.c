@@ -344,12 +344,14 @@ char spFiarCheckWinner(SPFiarGame* src){
 			return winning_seq_symbol;
 		}
 	}
+
 	for (int ci = 0; ci < SP_FIAR_GAME_N_COLUMNS; ci++) {
 		winning_seq_symbol = sequence_of_four(src, 0, ci, 1, 0);
 		if (winning_seq_symbol != ' ') {
 			return winning_seq_symbol;
 		}
 	}
+
 	if (is_board_full(src)) { /* checking if the game is full - and therefore a tie   */
 		return SP_FIAR_GAME_TIE_SYMBOL;
 	}
