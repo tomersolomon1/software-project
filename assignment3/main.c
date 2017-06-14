@@ -9,7 +9,7 @@
 #define HISTORY_SIZE 10
 
 void check_eval();
-int main222() {
+int main33() {
 	check_eval();
 	return 0;
 }

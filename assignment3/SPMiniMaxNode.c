@@ -754,7 +754,7 @@ void check_scores() {
 }
 
 void check_eval() {
-	//losing_boards();
+	losing_boards();
 	tie_board();
 	fflush(stdout);
 }
