@@ -37,15 +37,15 @@ void print_game_status(SPFiarGame* game){
 		fflush(stdout);
 	}
 	else if(winner == SP_FIAR_GAME_PLAYER_1_SYMBOL){
-		printf("Game over: you win\nPlease enter ‘quit’ to exit or ‘restart’ to start a new game!\n");
+		printf("Game over: you win\nPlease enter ‘quit’ to exit or ‘restart_game’ to start a new game!\n");
 		fflush(stdout);
 	}
 	else if(winner == SP_FIAR_GAME_PLAYER_2_SYMBOL){
-		printf("Game over: computer wins\nPlease enter ‘quit’ to exit or ‘restart’ to start a new game!\n");
+		printf("Game over: computer wins\nPlease enter ‘quit’ to exit or ‘restart_game’ to start a new game!\n");
 		fflush(stdout);
 	}
 	else if(winner == SP_FIAR_GAME_TIE_SYMBOL){
-		printf("Game over: it’s a tie\nPlease enter ‘quit’ to exit or ‘restart’ to start a new game!\n");
+		printf("Game over: it’s a tie\nPlease enter ‘quit’ to exit or ‘restart_game’ to start a new game!\n");
 		fflush(stdout);
 	}
 }

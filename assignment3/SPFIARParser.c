@@ -19,13 +19,25 @@
  * true if the string represents a valid integer, and false otherwise.
  */
 bool spParserIsInt(const char* str){
+	if(strlen(str) == 0){
+		return false;
+	}
 	int i = atoi(str);
 	if(i != 0){
 		return true;
 	}
-	for(unsigned int i = 0; i < strlen(str); i++){
-		if(str[i] != '0'){
-			return false;
+	// accepting "-0"
+	if(str[0] == '-' && strlen(str) == 2){
+		if(str[1] == '0'){
+			return true;
+		}
+	}
+	// accepting 0000000
+	else{
+		for(unsigned int i = 0; i < strlen(str); i++){
+			if(str[i] != '0'){
+				return false;
+			}
 		}
 	}
 	return true;
@@ -147,5 +159,3 @@ SPCommand spParserPraseLine(const char* str){
 	return command;
 
 }
-
-
