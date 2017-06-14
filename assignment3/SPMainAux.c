@@ -7,27 +7,41 @@
 #include "SPMainAux.h"
 
 unsigned int get_difficulty_level(){
+	unsigned int diffic_level = 0;
 	printf("Please enter the difficulty level between [1-7]:\n");
 	fflush(stdout);
-	char input;
-	int N = 0;
-	int had_error = 0;
-	while (((input = getchar()) != EOF) && (input != '\n')) {
-		if(had_error) {continue;}
-		else if('0' <= input && input <= '9'){
-			N = N * 10;
-			N += (input - '0');
+
+	char* line = (char *) malloc(sizeof(char) * MAX_LENGTH);
+	fgets(line, MAX_LENGTH, stdin);
+	SPCommand com = spParserPraseLine(line);
+	//quit
+	if(com.cmd == SP_QUIT){
+			printf("Exiting...\n");
+			fflush(stdout);
+			free(line);
+			exit(0);
+	}
+	//number
+	else if(spParserIsInt(line)){
+		diffic_level = atoi(line);
+		free(line);
+		if(diffic_level > 0 && diffic_level < 8){
+			return diffic_level;
 		}
 		else{
-			had_error = 1;
+			printf("Error: invalid level (should be between 1 to 7)\n");
+			fflush(stdout);
+			return 0;
 		}
 	}
-	if (N < 1 || 7 < N || had_error){
+	//jibrish
+	else{
+		free(line);
 		printf("Error: invalid level (should be between 1 to 7)\n");
 		fflush(stdout);
 		return 0;
 	}
-	return N;
+	return diffic_level;
 }
 
 void print_game_status(SPFiarGame* game){
@@ -37,15 +51,15 @@ void print_game_status(SPFiarGame* game){
 		fflush(stdout);
 	}
 	else if(winner == SP_FIAR_GAME_PLAYER_1_SYMBOL){
-		printf("Game over: you win\nPlease enter ‘quit’ to exit or ‘restart_game’ to start a new game!\n");
+		printf("Game over: you win\nPlease enter 'quit' to exit or 'restart_game' to start a new game!\n");
 		fflush(stdout);
 	}
 	else if(winner == SP_FIAR_GAME_PLAYER_2_SYMBOL){
-		printf("Game over: computer wins\nPlease enter ‘quit’ to exit or ‘restart_game’ to start a new game!\n");
+		printf("Game over: computer wins\nPlease enter 'quit' to exit or 'restart_game' to start a new game!\n");
 		fflush(stdout);
 	}
 	else if(winner == SP_FIAR_GAME_TIE_SYMBOL){
-		printf("Game over: it’s a tie\nPlease enter ‘quit’ to exit or ‘restart_game’ to start a new game!\n");
+		printf("Game over: it's a tie\nPlease enter 'quit' to exit or 'restart_game' to start a new game!\n");
 		fflush(stdout);
 	}
 }
@@ -115,7 +129,7 @@ bool make_command(SPCommand cmd, SPFiarGame* game, unsigned int depth){
 			spFiarGameDestroy(game);
 			exit(0);
 		}
-		printf("Remove disc: remove computer’s disc at column %d\n", col_undo + 1);
+		printf("Remove disc: remove computer's disc at column %d\n", col_undo + 1);
 		fflush(stdout);
 		col_undo = spArrayListGetFirst(game->history);
 		game_msg = spFiarGameUndoPrevMove(game);
@@ -125,7 +139,7 @@ bool make_command(SPCommand cmd, SPFiarGame* game, unsigned int depth){
 			spFiarGameDestroy(game);
 			exit(0);
 		}
-		printf("Remove disc: remove user’s disc at column %d\n", col_undo + 1);
+		printf("Remove disc: remove user's disc at column %d\n", col_undo + 1);
 		fflush(stdout);
 		return true;
 	}
@@ -143,7 +157,7 @@ bool make_command(SPCommand cmd, SPFiarGame* game, unsigned int depth){
 		return true;
 	}
 	else if(cmd.cmd == SP_QUIT){
-		printf("Exiting…\n");
+		printf("Exiting...\n");
 		fflush(stdout);
 		spFiarGameDestroy(game);
 		exit(0);

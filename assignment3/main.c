@@ -8,12 +8,6 @@
 #include "SPFIARGame.h"
 #define HISTORY_SIZE 10
 
-void check_eval();
-int main33() {
-	check_eval();
-	return 0;
-}
-
 int main(){
 	while(1){
 		unsigned int difficulty_level = get_difficulty_level();
@@ -31,8 +25,9 @@ int main(){
 		while(1){
 			if(cmd.cmd != SP_SUGGEST_MOVE){
 				spFiarGamePrintBoard(game);
+				print_game_status(game);
 			}
-			print_game_status(game);
+
 			cmd = get_cmd();
 			while(!is_command_ok(cmd, game)){
 				cmd = get_cmd();
@@ -45,4 +40,3 @@ int main(){
 
 	return 0;
 }
-
