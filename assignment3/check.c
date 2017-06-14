@@ -2,7 +2,7 @@
 #include "SPFIARGame.h"
 #define HISTORY_SIZE 10
 
-int main(){
+int main2222(){
 	int moves[] = {3,4,3,3,5,4,2};
 	int n = sizeof(moves)/sizeof(moves[0]);
 
