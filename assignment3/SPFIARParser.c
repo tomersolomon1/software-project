@@ -23,7 +23,7 @@ bool spParserIsInt(const char* str){
 	if(i != 0){
 		return true;
 	}
-	for(int i = 0; i < strlen(str); i++){
+	for(unsigned int i = 0; i < strlen(str); i++){
 		if(str[i] != '0'){
 			return false;
 		}
