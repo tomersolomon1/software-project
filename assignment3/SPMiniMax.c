@@ -11,9 +11,11 @@
 #include <limits.h>
 #include <stddef.h>
 
-
-/* we can assume the game is not over - there is at least one legal move, and the nobody has won yet */
 int spMinimaxSuggestMove(SPFiarGame* currentGame, unsigned int maxDepth) {
+	if ((currentGame == NULL) || (maxDepth <= 0)) {
+		return -1;
+	}
+
 	SPFiarGame* game_copy = spFiarGameCopy(currentGame);
 	if (game_copy != NULL) {
 		move_value best_move;
@@ -24,7 +26,7 @@ int spMinimaxSuggestMove(SPFiarGame* currentGame, unsigned int maxDepth) {
 		} else {
 			/* no legal move - some problem occurred  */
 			/* according to the return value we'll be able to who won / there was a tie */
-			return -1;
+			return -3;
 		}
 	} else { /* memory problem */
 		return -2;

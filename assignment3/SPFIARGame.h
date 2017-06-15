@@ -165,15 +165,27 @@ char spFiarGameGetCurrentPlayer(SPFiarGame* src);
 */
 char spFiarCheckWinner(SPFiarGame* src);
 
-/*
- * checking if the board is full,
+/* @param game_copy - pointer to the game
+ * checking if the board is full
+ *
+ * @return
+ * 1 		if the board is full
+ * 0		otherwise
  * if its full return 1, else 0
- * */
+ */
+
 int is_board_full(SPFiarGame* game_copy);
 
-/* return 0 if no 4-in-a-row in the sequence that starts at (ri, ci), in (delta_r, delta_c) direction
- * return 1 if there is 4 in-a-row - for player 1
- * return 2 if there is 4 in-a-row - for player 2
+/* @param game_copy - pointer to the game
+ * @param ri - row starting point
+ * @param ci - column starting point
+ * @param delta_r - vector of movement along the rows
+ * @param delta_c - vector of movement along the columns
+ *
+ * @return
+ * 0 		if no 4-in-a-row in the sequence that starts at (ri, ci), in (delta_r, delta_c) direction
+ * 1 		if there is 4 in-a-row - for player 1
+ * 2 		if there is 4 in-a-row - for player 2
  */
 char sequence_of_four(SPFiarGame* game_copy, int ri, int ci, int delta_r, int delta_c);
 

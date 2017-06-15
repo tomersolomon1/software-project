@@ -17,18 +17,6 @@
 
 #include "SPFIARGame.h"
 
-/**
- * Creates a new game with a specified history size. The history size is a
- * parameter which specifies the number of previous moves to store. If the number
- * of moves played so far exceeds this parameter, then first moves stored will
- * be discarded in order for new moves to be stored.
- *
- * @historySize - The total number of moves to undo,
- *                a player can undo at most historySizeMoves turns.
- * @return
- * NULL if either a memory allocation failure occurs or historySize <= 0.
- * Otherwise, a new game instant is returned.
- */
 SPFiarGame* spFiarGameCreate(int historySize){
 	SPFiarGame* newGame = (SPFiarGame*) malloc(sizeof(SPFiarGame));
 	if(newGame == NULL){
@@ -48,16 +36,6 @@ SPFiarGame* spFiarGameCreate(int historySize){
 	return newGame;
 }
 
-/**
- *	Creates a copy of a given game.
- *	The new copy has the same status as the src game.
- *
- *	@param src - the source game which will be copied
- *	@return
- *	NULL if either src is NULL or a memory allocation failure occurred.
- *	Otherwise, an new copy of the source game is returned.
- *
- */
 SPFiarGame* spFiarGameCopy(SPFiarGame* src){
 	if(src == NULL){
 		return NULL;
@@ -85,12 +63,6 @@ SPFiarGame* spFiarGameCopy(SPFiarGame* src){
 	return dst;
 }
 
-/**
- * Frees all memory allocation associated with a given game. If src==NULL
- * the function does nothing.
- *
- * @param src - the source game
- */
 void spFiarGameDestroy(SPFiarGame* src){
 	if(src != NULL){
 		spArrayListDestroy(src->history);
@@ -98,16 +70,6 @@ void spFiarGameDestroy(SPFiarGame* src){
 	}
 }
 
-/**
- * Sets the next move in a given game by specifying column index. The
- * columns are 0-based and in the range [0,SP_FIAR_GAME_N_COLUMNS -1].
- *
- * @param src - The target game
- * @param col - The target column, the columns are 0-based
- * @return
- * SP_FIAR_GAME_INVALID_ARGUMENT - if src is NULL or col is out-of-range
- * SP_FIAR_GAME_INVALID_MOVE - if the given column is full.
- */
 SP_FIAR_GAME_MESSAGE spFiarGameSetMove(SPFiarGame* src, int col){
 	if(src == NULL){
 		return SP_FIAR_GAME_INVALID_ARGUMENT;
@@ -132,15 +94,6 @@ SP_FIAR_GAME_MESSAGE spFiarGameSetMove(SPFiarGame* src, int col){
 	return SP_FIAR_GAME_SUCCESS;
 }
 
-/**
- * Checks if a disk can be put in the specified column.
- *
- * @param src - The source game
- * @param col - The specified column
- * @return
- * true  - if the a disc can be put in the target column
- * false - otherwise.
- */
 bool spFiarGameIsValidMove(SPFiarGame* src, int col){
 	if(src == NULL){
 		return false;
@@ -152,19 +105,6 @@ bool spFiarGameIsValidMove(SPFiarGame* src, int col){
 	return false;
 }
 
-/**
- * Removes a disc that was put in the previous move and changes the current
- * player's turn. If the user invoked this command more than historySize times
- * in a row then an error occurs.
- *
- * @param src - The source game
- * @return
- * SP_FIAR_GAME_INVALID_ARGUMENT - if src == NULL
- * SP_FIAR_GAME_NO_HISTORY       - if the user invoked this function more then
- *                                 historySize in a row.
- * SP_FIAR_GAME_SUCCESS          - on success. The last disc that was put on the
- *                                 board is removed and the current player is changed
- */
 SP_FIAR_GAME_MESSAGE spFiarGameUndoPrevMove(SPFiarGame* src){
 	if(src == NULL){
 		return SP_FIAR_GAME_INVALID_ARGUMENT;
@@ -186,9 +126,6 @@ SP_FIAR_GAME_MESSAGE spFiarGameUndoPrevMove(SPFiarGame* src){
 	return SP_FIAR_GAME_SUCCESS;
 }
 
-/**
- * checks if there is any history
- * */
 bool spFiarGameIsUndoPossible(SPFiarGame* src){
 	if(spArrayListSize(src->history) == 0){
 		return false;
@@ -196,17 +133,6 @@ bool spFiarGameIsUndoPossible(SPFiarGame* src){
 	return true;
 }
 
-/**
- * On success, the function prints the board game. If an error occurs, then the
- * function does nothing. The characters 'X' and 'O' are used to represent
- * the discs of player 1 and player 2, respectively.
- *
- * @param src - the target game
- * @return
- * SP_FIAR_GAME_INVALID_ARGUMENT - if src==NULL
- * SP_FIAR_GAME_SUCCESS - otherwise
- *
- */
 SP_FIAR_GAME_MESSAGE spFiarGamePrintBoard(SPFiarGame* src){
 	if(src == NULL){
 		return SP_FIAR_GAME_INVALID_ARGUMENT;
@@ -236,14 +162,6 @@ SP_FIAR_GAME_MESSAGE spFiarGamePrintBoard(SPFiarGame* src){
 	return SP_FIAR_GAME_SUCCESS;
 }
 
-/**
- * Returns the current player of the specified game.
- * @param src - the source game
- * @return
- * SP_FIAR_GAME_PLAYER_1_SYMBOL - if it's player one's turn
- * SP_FIAR_GAME_PLAYER_2_SYMBOL - if it's player two's turn
- * SP_FIAR_GAME_EMPTY_ENTRY     - otherwise
- */
 char spFiarGameGetCurrentPlayer(SPFiarGame* src){
 	if(src == NULL){
 		return SP_FIAR_GAME_EMPTY_ENTRY;
@@ -270,10 +188,6 @@ int is_board_full(SPFiarGame* game_copy) {
 	return 1; /* the board is full */
 }
 
-/* return 0 if no 4-in-a-row in the sequence that starts at (ri, ci), in (delta_r, delta_c) direction
- * return 1 if there is 4 in-a-row - for player 1
- * return 2 if there is 4 in-a-row - for player 2
- */
 char sequence_of_four(SPFiarGame* game_copy, int ri, int ci, int delta_r, int delta_c) {
 	int sequence_len = 0; /* the length of the current sequence */
 	char empty_symbol = ' '; /* no player sequence */
@@ -305,19 +219,6 @@ char sequence_of_four(SPFiarGame* game_copy, int ri, int ci, int delta_r, int de
 	}
 }
 
-/**
-* Checks if there's a winner in the specified game status. The function returns either
-* SP_FIAR_GAME_PLAYER_1_SYMBOL or SP_FIAR_GAME_PLAYER_2_SYMBOL in case there's a winner, where
-* the value returned is the symbol of the winner. If the game is over and there's a tie
-* then the value SP_FIAR_GAME_TIE_SYMBOL is returned. in any other case the null characters
-* is returned.
-* @param src - the source game
-* @return
-* SP_FIAR_GAME_PLAYER_1_SYMBOL - if player 1 won
-* SP_FIAR_GAME_PLAYER_2_SYMBOL - if player 2 won
-* SP_FIAR_GAME_TIE_SYMBOL - If the game is over and there's a tie
-* null character - otherwise
-*/
 char spFiarCheckWinner(SPFiarGame* src){
 	char winning_seq_symbol;
 	for (int ri = 0; ri < SP_FIAR_GAME_N_ROWS; ri++) {

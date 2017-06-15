@@ -12,12 +12,12 @@
  * @param currentGame - The current game state
  * @param maxDepth - The maximum depth of the miniMax algorithm
  * @return
- * -1 if either currentGame is NULL or maxDepth <= 0.
+ * -1 			if either currentGame is NULL or maxDepth <= 0.
+ * -2			if there is no legal move - some problem occurred
+ * -3			there was a memory problem
  * On success the function returns a number between [0,SP_FIAR_GAME_N_COLUMNS -1]
  * which is the best move for the current player.
  */
-
-/* we can assume the game is not over - there is at least one legal move, and nobody has won yet */
 
 int spMinimaxSuggestMove(SPFiarGame* currentGame,
 		unsigned int maxDepth);
