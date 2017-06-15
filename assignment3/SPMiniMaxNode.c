@@ -138,14 +138,8 @@ int is_the_game_over(SPFiarGame* game_copy, move_value* this_move) {
 	return 0; /* otherwise, no one has won and it's not a tie */
 }
 
-char get_symbol(char current_player) {
-	char symbol = (current_player == '1' ? SP_FIAR_GAME_PLAYER_1_SYMBOL : SP_FIAR_GAME_PLAYER_2_SYMBOL);
-	return symbol;
-}
-
 move_value minimaxAlgo(SPFiarGame* game_copy, unsigned int maxDepth) {
 	char current_symbol = spFiarGameGetCurrentPlayer(game_copy);
-	// char current_symbol =  get_symbol(game_copy->currentPlayer); /* the symbol of the current player */
 	move_value best_move; /* will contain the best move for the player and it's value */
 	best_move.move = -1; /* default value */
 	best_move.value = (game_copy->currentPlayer == '1' ? (INT_MIN + 2) : (INT_MAX - 2)); /* default value for the mini-max algo */

@@ -163,14 +163,6 @@ void update_best_move(move_value* best_move_so_far, int value, int move, char cu
 
 int is_the_game_over(SPFiarGame* game_copy, move_value* this_move);
 
-/*
- * @param current_player - the current player ('1' or '2')
- * @return
- * current player symbol
- */
-
-char get_symbol(char current_player);
-
 /* @param game_copy - a pointer to the game
  * @param maxDepth  - the maximum depth of the recursion
  *
