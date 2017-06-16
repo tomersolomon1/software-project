@@ -132,7 +132,8 @@ int is_the_game_over(SPFiarGame* game_copy, move_value* this_move) {
 		this_move->value = INT_MIN;
 		return 1;
 	} else if (game_status == SP_FIAR_GAME_TIE_SYMBOL) { /* it's a tie */
-		this_move->value = 0;
+		//this_move->value = 0;
+		this_move->value = evaluate_board(game_copy);
 		return 1;
 	}
 	return 0; /* otherwise, no one has won and it's not a tie */
