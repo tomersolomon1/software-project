@@ -128,7 +128,7 @@ int is_the_game_over(SPFiarGame* game_copy, move_value* this_move) {
 	if (game_status == SP_FIAR_GAME_PLAYER_1_SYMBOL) { /* player 1 has won */
 		this_move->value = INT_MAX;
 		return 1;
-	} else if (game_status == SP_FIAR_GAME_PLAYER_2_SYMBOL) { /* player 2 has won */
+	} else if (game_status == SP_FIAR_GAME_PLAYER_2_SYMBOL) { /* player 2 has won  */
 		this_move->value = INT_MIN;
 		return 1;
 	} else if (game_status == SP_FIAR_GAME_TIE_SYMBOL) { /* it's a tie */
