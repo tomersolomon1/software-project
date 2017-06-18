@@ -19,25 +19,32 @@
  * true if the string represents a valid integer, and false otherwise.
  */
 bool spParserIsInt(const char* str){
-	if(strlen(str) == 0){
+	int n = (int) strlen(str);
+	if(n == 0){
 		return false;
 	}
-	int i = atoi(str);
-	if(i != 0){
-		return true;
+	int i = 0;
+	//skip whitespace
+	while(str[i] == '\t' || str[i] == ' '){
+		i++;
 	}
-	// accepting "-0"
-	if(str[0] == '-' && strlen(str) == 2){
-		if(str[1] == '0'){
-			return true;
+	//minus sign
+	if(str[i] == '-'){
+		i++;
+	}
+	bool had_space = false;
+	for(; i < n; i++){
+		if(str[i] == '\n'){
+			break;
 		}
-	}
-	// accepting 0000000
-	else{
-		for(unsigned int i = 0; i < strlen(str); i++){
-			if(str[i] != '0'){
-				return false;
-			}
+		else if(str[i] == '\t' || str[i] == ' '){
+			had_space = true;
+		}
+		else if((!had_space) && str[i] >= '0' && str[i] <= '9'){
+			continue;
+		}
+		else{
+			return false;
 		}
 	}
 	return true;
@@ -135,6 +142,10 @@ SPCommand spParserPraseLine(const char* str){
 		return command;
 	}
 	else if(curr_cmd == 2){ 				//need to get coloumn number
+		//check there's at least not whitespace:
+		if(!(str[curr_pointer - 1] == '\t' || str[curr_pointer - 1] == ' ')){
+			return command;
+		}
 		command.cmd = comms[curr_cmd];
 		bool had_number = false;
 		int col = 0;

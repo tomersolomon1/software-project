@@ -22,7 +22,7 @@ unsigned int get_difficulty_level(){
 			exit(0);
 	}
 	//number
-	else if(spParserIsInt(line)){
+	if(spParserIsInt(line)){
 		diffic_level = atoi(line);
 		free(line);
 		if(diffic_level > 0 && diffic_level < 8){

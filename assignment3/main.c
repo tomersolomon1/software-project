@@ -8,6 +8,8 @@
 #include "SPFIARGame.h"
 #define HISTORY_SIZE 10
 
+
+
 int main(){
 	while(1){
 		unsigned int difficulty_level = get_difficulty_level();

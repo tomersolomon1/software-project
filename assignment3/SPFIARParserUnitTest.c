@@ -29,8 +29,18 @@ static bool spParserCheckParseLine() {
 	ASSERT_TRUE(cmd.cmd == SP_INVALID_LINE && !cmd.validArg);
 	return true;
 }
-int main3() {
+int main450() {
 	RUN_TEST(spParserCheckIsInt);
 	RUN_TEST(spParserCheckParseLine);
+	bool a = spParserIsInt("4r");
+	int i = atoi("4r");
+	if(a){
+		printf("4r is int %d", i);
+		fflush(stdout);
+	}
+	else{
+		printf("4r is NOT int");
+		fflush(stdout);
+	}
 	return 0;
 }
